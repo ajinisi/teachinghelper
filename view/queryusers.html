@@ -1,0 +1,260 @@
+
+ 
+<title> 查询所有用户 </title>
+
+<link rel="stylesheet" type="text/css" href="css/style.css" charset="utf-8">
+
+<body>
+  <div class="container" >
+      
+    
+
+    <!-- 头部 -->
+    <div class="header">
+        <h1>网页头部</h1>
+    </div>
+
+    <!-- 中部 -->
+    <div class="content">
+
+      <!-- 页面左侧导航栏侧边栏 -->
+      <aside class = "sidebar" >
+        <nav>
+            <ul>
+                <li>管理员登陆</li>
+                <li><a href="queryusers.html">学生信息查看</a></li>
+                <li>系统日志</li>
+                <li> <a href="about.html">关于</a>  </li>
+                <li><a href="querydatas.html">答题信息查询</a></li>
+            </ul>
+
+        </nav>
+
+      </aside>
+
+      <!-- 中间展示区中间显示信息 -->
+      <div class="maincontent">
+        <table >
+          <caption>学生信息查询</caption>
+          <tbody id="table"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+
+  </div>
+
+</body>
+
+
+
+<!--  
+
+
+
+
+
+<p>Table with thead, tfoot, and tbody</p>
+<table>
+  <thead>
+    <tr>
+      <th>Header content 1</th>
+      <th>Header content 2</th>
+    </tr>
+  </thead>
+  <tfoot>
+    <tr>
+      <td>Footer content 1</td>
+      <td>Footer content 2</td>
+    </tr>
+  </tfoot>
+  <tbody>
+    <tr>
+      <td>Body content 1</td>
+      <td>Body content 2</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Table with colgroup</p>
+<table>
+  <colgroup span="4" class="columns"></colgroup>
+  <tr>
+    <th>Countries</th>
+    <th>Capitals</th>
+    <th>Population</th>
+    <th>Language</th>
+  </tr>
+  <tr>
+    <td>USA</td>
+    <td>Washington D.C.</td>
+    <td>309 million</td>
+    <td>English</td>
+  </tr>
+  <tr>
+    <td>Sweden</td>
+    <td>Stockholm</td>
+    <td>9 million</td>
+    <td>Swedish</td>
+  </tr>
+</table>
+
+<p>Table with colgroup and col</p>
+<table>
+  <colgroup>
+    <col class="column1">
+    <col class="columns2plus3" span="2">
+  </colgroup>
+  <tr>
+    <th>Lime</th>
+    <th>Lemon</th>
+    <th>Orange</th>
+  </tr>
+  <tr>
+    <td>Green</td>
+    <td>Yellow</td>
+    <td>Orange</td>
+  </tr>
+</table>
+
+-->
+
+
+
+<!--
+<script>
+var xml = XMLHttpRequest();
+xml.open("POST", "http://113.54.196.156:8080/query", true);
+</script>
+
+
+<SCRIPT LANGUAGE="JavaScript">  
+        //   
+        var objdbConn = new ActiveXObject("ADODB.Connection");    
+        var strdsn = "Driver={mysql ODBC 5.2w Driver};SERVER=localhost;UID=root;PWD=123456;DATABASE=login";      // 需要修改自己的服务器地址,用户名,密码  
+        //var connectionstring = "Driver={MySQL ODBC 5.2w Driver};Server=localhost;Database=myDataBase;User=myUsername; Password=myPassword;Option=3;Port=3306";  
+        objdbConn.Open(strdsn);       
+        var objrs = objdbConn.Execute("SELECT * FROM login.users");                  // 输入本地的表  
+        var fdCount = objrs.Fields.Count - 1;           
+        if (!objrs.EOF){                                 
+          document.write("<table border=1><tr>");     
+          for (var i=0; i <= fdCount; i++)                  
+              document.write("<td><b>" + objrs.Fields(i).Name + "</b></td>");  
+          document.write("</tr>");  
+          
+          while (!objrs.EOF){                     
+            document.write("<tr>");               
+            for (i=0; i <= fdCount; i++)  
+               document.write("<td valign='top'>" + objrs.Fields(i).Value + "</td>");  
+            document.write("</tr>");  
+            objrs.moveNext();                   
+          }  
+          document.write("</table>");   
+        }  
+        else   
+          document.write("数据库内没有记录!<br>");  
+        objrs.Close();                           
+        objdbConn.Close();                     
+        //  
+</SCRIPT>  
+-->
+
+
+<SCRIPT> 
+//var id1 = data.grant[0].tm_id;
+
+//var name1 = data.grant[0].tm_name;
+
+//var id2 = data.grant[1].tm_id;
+//var name2 = data.grant[1].tm_name;
+
+//for(var i=0;i<data.grant.length;i++){
+      //alert(data.grant[i].tm_id+"---"+data.grant[i].tm_name);
+//}
+
+
+
+
+
+/*
+var userName;      
+var passWord;      
+var xmlHttpRequest;      
+  */    
+      
+//XmlHttpRequest对象      
+function createXmlHttpRequest(){      
+    if(window.ActiveXObject){ //如果是IE浏览器      
+        return new ActiveXObject("Microsoft.XMLHTTP");      
+    }else if(window.XMLHttpRequest){ //非IE浏览器      
+        return new XMLHttpRequest();      
+    }      
+}      
+      
+function queryuser(){      
+  //userName = document.f1.username.value;      
+  //passWord = document.f1.password.value;        
+        
+  //var url = "LoginServlet?username="+userName+"&password="+passWord+"";         
+  var url = "http://localhost:8080/query";          
+  // 1.创建XMLHttpRequest组建      
+  xmlHttpRequest = createXmlHttpRequest();      
+        
+  // 2.注册回调函数，函数名后面不需要加括号      
+  xmlHttpRequest.onreadystatechange = statechanged;      
+        
+  // 3.初始化XMLHttpRequest组建      
+  xmlHttpRequest.open("POST",url,true);
+  //xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");      
+        
+  //4.发送请求      
+  xmlHttpRequest.send(null);        
+}         
+      
+      
+// 回调函数      
+function statechanged(){
+  var req = xmlHttpRequest;
+  if(req.readyState == 4 ){
+    if(req.status == 200){
+      var json_str = xmlHttpRequest.responseText; // json形式的字符串
+      var users = eval('(' + json_str + ')'); // 转化为json格式
+      // var user = JSON.parse(json_str); // 转化为json格式的另一种方式，较安全
+
+      var TableData="<th>学号</th><th>密码</th>"
+      for  (var i=0;i<users.length;i++){
+        TableData+="<tr>"
+        TableData+="<td>"+users[i].username+"</td>"
+        TableData+="<td>"+users[i].password+"</td>"
+        TableData+="</tr>"
+      } 
+
+      document.getElementById('table').innerHTML=TableData
+    }
+    else if(req.status == 404)
+    {
+      alert("request url is not found");
+    }
+    else if(req.status == 401 || req.status == 403)
+    {
+      alert("request url is forbidden or not authorized to visit.");
+    }
+    else
+    {
+      alert("unexpected error!Status Code :"+req.status);
+    }
+  }                    
+}
+
+
+queryuser();
+
+</SCRIPT> 
+
+
+
+
+
+
+

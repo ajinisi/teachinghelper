@@ -149,12 +149,12 @@ func queryquesbank(w http.ResponseWriter, r *http.Request) {
 		json.Unmarshal([]byte(temp), &question)
 		questions = append(questions, question)
 
-		/* 貌似也可以
-		if err := rows.Scan(&question); err != nil {
-			log.Fatal(err)
-		}
-		questions = append(questions, question)
-		*/
+		//貌似也可以
+		// if err := rows.Scan(&question); err != nil {
+		// 	log.Fatal(err)
+		// }
+		// questions = append(questions, question)
+
 	}
 
 	ret, json_err := json.Marshal(&questions) // json化结果集
@@ -164,4 +164,18 @@ func queryquesbank(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(ret)) // json转化为字符串发送
 	//log.Println(string(ret))
 	//w.WriteHeader(200)
+}
+
+func upload(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+
+	body, _ := ioutil.ReadAll(r.Body)
+	//var str = string(body)
+
+	//log.Println(str)
+	//var d1 = []byte(str)
+	err2 := ioutil.WriteFile("C:/Users/ajini/Desktop/goproject/src/teachingsite/view/test.html", body, 0666)
+	if err2 != nil {
+		log.Println(err2)
+	}
 }

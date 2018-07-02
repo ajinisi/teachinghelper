@@ -55,11 +55,19 @@
 	padding:10px;
 	border:1px solid #aaaaaa;
 }
-#div0, #div1, #div2, #div3, #div4{
+.div{
 	float:left; 
 	width:600px; 
 	height:100px; 
 	margin:10px;
 	padding:10px;
 	border:1px solid #aaaaaa;
+	
+}
+.div:hover { background:#A0A0A0; }
+
+
+ol li{
+	margin-left: 20px;
+	list-style-type: decimal;
 }

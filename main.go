@@ -30,11 +30,12 @@ func main() {
 	//mux.HandleFunc("/querygrade", querygrade)
 	//mux.HandleFunc("/commitanwer", commitanwer)
 	http.HandleFunc("/queryquesbank", queryquesbank)
+	http.HandleFunc("/upload", upload)
 	//mux.HandleFunc("/index", index)
 
 	// http.HandleFunc("/123", NotFoundHandler)
 
-	http.Handle("/", http.FileServer(http.Dir("C:/Users/ajini/Desktop/goproject/src/education")))
+	http.Handle("/", http.FileServer(http.Dir("C:/Users/ajini/Desktop/goproject/src/teachinghelper")))
 	http.HandleFunc("/index", Index)
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {

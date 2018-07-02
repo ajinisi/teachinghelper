@@ -10,12 +10,12 @@ function createXmlHttpRequest(){
 
 
 
-function queryuser(){      
+function querybank(){      
 	//userName = document.f1.username.value;      
 	//passWord = document.f1.password.value;        
 		  
 	//var url = "LoginServlet?username="+userName+"&password="+passWord+"";         
-	var url = "http://113.54.223.194:8080/queryquesbank";          
+	var url = "http://localhost:8080/queryquesbank";          
 	
 	// 1.创建XMLHttpRequest组建      
 	xmlHttpRequest = createXmlHttpRequest();      
@@ -152,7 +152,7 @@ function showquestion(i){
 	// 可以拖动的东西 
 	//document.getElementById('questions').innerHTML+="<div id='div"+i+"' ondrop='drop(event)' ondragover='allowDrop(event)'>"+"<div draggable='true' ondragstart='drag(event)' id='question"+i+"' ></div>"+"</div>"
 	document.getElementById('questions').innerHTML+=
-			`<div id='div${i}' ondrop='drop(event)' ondragover='allowDrop(event)'> 
+			`<div class='div' ondrop='drop(event)' ondragover='allowDrop(event)'> 
 					<div draggable='true' ondragstart='drag(event)' id='question${i}' ></div>
 			</div>`
 
@@ -169,34 +169,25 @@ function showquestion(i){
 		// 显示选项
 		var op = "<ol>"
 		for  (var j=0;j<questions[i].options.length;j++){
-						op+="<li>"
-						var id1='o'+i+j
-						op+="<input name='identity"+i+"' type='radio' value="+j+" id="+id1+">"
-						op+="<label for="+id1+">"+(questions[i].options)[j]+"</label>"
-						op+="</li>"
+			op+="<li>"
+			var id1='o'+i+j
+			op+="<input name='identity"+i+"' type='radio' value="+j+" id="+id1
+			// check whether the option is the answer, if so, present it
+			// 判断该选项是否为答案，如果是则默认选择
+			if(questions[i].answers[0]==j){
+				op+=" checked>"
+			}else{
+				op+=">"
+			}
+			op+="<label for="+id1+">"+(questions[i].options)[j]+"</label>"
+			op+="</li>"
 		} 
 		op+="</ol>"
 		document.getElementById('options'+i).innerHTML=op
-
 		
-		var btn = document.querySelectorAll("[name='identity3']");
-		
-		function bgChange(o){                        
-				questions[i].userAnswer = o.value
-				alert(questions[i].userAnswer)
-		}                    
-
-		for(var j=0;j<btn.length;j++){
-						a1(j)
-		}
-
-		function a1(j){
-						btn[j].addEventListener('click', function(){
-										bgChange(eval('o'+i+j))
-						})
-		}
 
 	}
+
 
 
 	// 判断题目类型
@@ -231,10 +222,10 @@ function showquestion(i){
 		// 显示选项
 		var op = ""
 		for  (var j=0;j<questions[i].answers.length;j++){
-				op+="<input type='text'>"
+				op+="<input type='text' "
+				op+=`placeholder=${questions[i].answers[j]}`
+				op+=">"
 		} 
-
-
 		document.getElementById('options'+i).innerHTML=op
 
 	}     
@@ -243,32 +234,72 @@ function showquestion(i){
 
 }
 
+
+
+
+
+
+
+			
+
+			
+			
+
+
+
+
+
+
+
+
+// 获得数据库中的题目
 var questions
-	
+querybank();	
 
-$(all).bind("click",function(){
+$(all).bind("click",function(){    
+	// 连续显示所有题目
+	document.getElementById('questions').innerHTML=""
 	
-	queryuser();
-    
-				// 连续显示所有题目
-				document.getElementById('questions').innerHTML=""
-				
-				for  (var i=0;i<questions.length;i++){
+	for  (var i=0;i<questions.length;i++){
+		showquestion(i)	
+	} 
+	// 连续绑定选项按钮事件
+	for  (var i=0;i<questions.length;i++){
+		bindoptions(i)	
+	} 
+
+});
+
+
+
+function bindoptions(i){
+		var btns = document.querySelectorAll(`[name="identity${i}"]`);
 					
-						showquestion(i)
-				} 
-	});
-    
+		function bgChange(o){                        
+				questions[i].userAnswer = o.value
+				alert(questions[i].userAnswer)
+		}                    
+	
+		for(var j=0;j<btns.length;j++){
+			a1(j)
+		}
+	
+		function a1(j){
+			btns[j].addEventListener('click', function(){
+				bgChange(eval('o'+i+j))
+			})
+		}
+}
 
 
-	 $(choose).bind("click",function(){
+
+$(choose).bind("click",function(){
 	 	//	var x=$("questions").length;
 	 	//	alert(x);
-	 	//queryuser1();
-	 	queryuser();
+	 	//querybank1();
+	 	
 	 	document.getElementById('questions').innerHTML=""
-		var x=questions.length;
-	 	for(var i=0;i<x;i++){
+	 	for(var i=0;i<questions.length;i++){
 	 		if(questions[i].type=='single'||questions[i].type=="multiple"){
 	 			console.log(questions[i].type);
 	 			showquestion(i);
@@ -291,8 +322,13 @@ button2.onclick = function(){
 button1.onclick = function(){
     i--;
     showquestion(i);
-
 }
+
+button3.onclick = function(){
+	makepaper();
+}
+
+
 
 
 
@@ -330,7 +366,7 @@ button1.onclick = function(){
 
 
 
-
+// 选择题型的按钮
 
 function select(){
 	$(document).click(function(){
@@ -349,72 +385,61 @@ function select(){
 	})
 }
 
-
 $(function(){
 	select(); 
 })
+
       
-   //判断当前点击标签所属哪一行
-   function show(e){
-	if(e==0){
-			var t=document.getElementById("diva");
-			var y1=document.createElement("divb");
-			y1.id="id1";
-			y1.className="class";
-			y1.style.border="2 px solid red";
-			t.appendChild(y1);
-			document.getElementById("id1").innerHTML=document.getElementById("question0").innerHTML+'<ul onclick="deleat()">'+"delaete"+'</ul>'
+ 
+
+
+// 上传试卷到服务器
+function upload(){   
+ 
+
+	var html = $("document.documentElement").html()
+
+	var url = "http://113.54.223.194:8080/upload";          
+	
+	// 1.创建XMLHttpRequest组建      
+	xmlHttpRequest = createXmlHttpRequest();      
+	
+	// 2.注册回调函数，函数名后面不需要加括号      
+	// xmlHttpRequest.onreadystatechange = statechanged;      
+		  
+	// 3.初始化XMLHttpRequest组建      
+	xmlHttpRequest.open("POST",url,true);
+	//xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");      
+		  
+	//4.发送请求 
+	//html_json = json.stringify(html)     
+	xmlHttpRequest.send(html);
+
+
+}
+
+
+//赋值到另一张html中
+function makepaper(){   
+ 
 		
-			}
-	if(e==1){
-			var t=document.getElementById("diva");
-			var y2=document.createElement("divc");
-			y2.id="id2";
-			y2.className="class";
-			y2.style.border="2 px solid red";
-			y2.style="display：inline-block";
-			t.appendChild(y2);
-			document.getElementById("id2").innerHTML=document.getElementById("question1").innerHTML+'<ul onclick="deleat1()">'+"delaete"+'</ul>'
-			}
-			
-	if(e==2){
-			$("#diva").append($("#question2").html());}
-			
-	if(e==3){
-			$("#diva").append($("#question3").html());}
-			
-	if(e==4){
-			$("#diva").append($("#question4").html());}	
-	} 
+	// 新建一个空白
+	var newwindow = window.open('', "_blank",'');
 	
-	function anwser(e){
-		alert(e);
-	}
-	//赋值到另一张html中
-	function Copy()
-			{   
-				var divs = $("diva");
-				var x=divs.length;
-				alert(x);
-				$('#diva div').each(function(i){
-					$(this).attr("id");
-			})
-	
-			var w = window.open();  
-		    w.document.open("C:\Users\ajini\Documents");  
-		    w.document.write(document.getElementById("diva").innerHTML);  
-		    w.document.close();  
-			}
-	
-	
-			function deleat(){
-				//document.getElementById("question0").innerHTML=document.getElementById("id1").innerHTML;
-					 document.getElementById('id1').remove();
-			}
-			function deleat1(){
-				//document.getElementById("question0").innerHTML=document.getElementById("id1").innerHTML;
-					 document.getElementById('id2').remove();
-			}
+
+	var html = document.getElementById("diva").innerHTML
+	html += `<button id="button" onclick="upload()"> 确认提交 </button>`
+	html += `<script src="static/js/main.js"></script>`
+	// 写入
+	newwindow.document.write(html);
+
+	// button.onclick = function(){
+	// 	upload();
+	// }	
+
+}
+
+
 	
 
 

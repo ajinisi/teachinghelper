@@ -1,5 +1,5 @@
   
-  //XmlHttpRequest对象      
+//XmlHttpRequest对象      
 function createXmlHttpRequest(){      
     if(window.ActiveXObject){ //如果是IE浏览器      
         return new ActiveXObject("Microsoft.XMLHTTP");      
@@ -44,7 +44,7 @@ function querybank(){
 	  if(req.status == 200){
 		var json_str = xmlHttpRequest.responseText; // json形式的字符串
 		questions = eval('(' + json_str + ')'); // 转化为json格式
-		//alert(questions)
+		alert(questions)
 		// var user = JSON.parse(json_str); // 转化为json格式的另一种方式，较安全
 
 	  }
@@ -242,34 +242,6 @@ function showquestion(i){
 
 			
 
-			
-			
-
-
-
-
-
-
-
-
-// 获得数据库中的题目
-var questions
-querybank();	
-
-$(all).bind("click",function(){    
-	// 连续显示所有题目
-	document.getElementById('questions').innerHTML=""
-	
-	for  (var i=0;i<questions.length;i++){
-		showquestion(i)	
-	} 
-	// 连续绑定选项按钮事件
-	for  (var i=0;i<questions.length;i++){
-		bindoptions(i)	
-	} 
-
-});
-
 
 
 function bindoptions(i){
@@ -289,43 +261,6 @@ function bindoptions(i){
 				bgChange(eval('o'+i+j))
 			})
 		}
-}
-
-
-
-$(choose).bind("click",function(){
-	 	//	var x=$("questions").length;
-	 	//	alert(x);
-	 	//querybank1();
-	 	
-	 	document.getElementById('questions').innerHTML=""
-	 	for(var i=0;i<questions.length;i++){
-	 		if(questions[i].type=='single'||questions[i].type=="multiple"){
-	 			console.log(questions[i].type);
-	 			showquestion(i);
-	 	}
-	 }
-});
-
-
-
-/********* 上一题 **********/
-
-// 第几题
-var i = 2
-
-button2.onclick = function(){
-    i++;
-    showquestion(i);
-}
-
-button1.onclick = function(){
-    i--;
-    showquestion(i);
-}
-
-button3.onclick = function(){
-	makepaper();
 }
 
 
@@ -362,10 +297,6 @@ button3.onclick = function(){
 
 
 
-
-
-
-
 // 选择题型的按钮
 
 function select(){
@@ -385,57 +316,37 @@ function select(){
 	})
 }
 
-$(function(){
-	select(); 
-})
+
 
       
  
 
 
-// 上传试卷到服务器
-function upload(){   
- 
 
-	var html = $("document.documentElement").html()
-
-	var url = "http://113.54.223.194:8080/upload";          
-	
-	// 1.创建XMLHttpRequest组建      
-	xmlHttpRequest = createXmlHttpRequest();      
-	
-	// 2.注册回调函数，函数名后面不需要加括号      
-	// xmlHttpRequest.onreadystatechange = statechanged;      
-		  
-	// 3.初始化XMLHttpRequest组建      
-	xmlHttpRequest.open("POST",url,true);
-	//xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");      
-		  
-	//4.发送请求 
-	//html_json = json.stringify(html)     
-	xmlHttpRequest.send(html);
-
-
-}
 
 
 //赋值到另一张html中
 function makepaper(){   
- 
+
 		
 	// 新建一个空白
-	var newwindow = window.open('', "_blank",'');
+	var newWim = window.open('','_blank','');
 	
 
-	var html = document.getElementById("diva").innerHTML
-	html += `<button id="button" onclick="upload()"> 确认提交 </button>`
-	html += `<script src="static/js/main.js"></script>`
-	// 写入
-	newwindow.document.write(html);
-
-	// button.onclick = function(){
-	// 	upload();
-	// }	
+	var html = `<form action="http://localhost:8080" method="post">
+    				<fieldset>
+      					<legend>试卷</legend>`
+	html += document.getElementById("diva").innerHTML
+	html += `<button id="button" type="submit"> 确认提交 </button>`
+	html += `</fieldset></form>`
+	
+	// window.setTimeout(function(){
+	// 	newWim.document.body.innerHTML+=html;
+  	// },10);
+		
+	newWim.document.write(html)
+	newWim.document.close()
+	
 
 }
 

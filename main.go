@@ -21,7 +21,7 @@ type User struct {
 
 func main() {
 	//mux := http.NewServeMux()
-	//mux.HandleFunc("/login", login)
+	http.HandleFunc("/login", login)
 	http.HandleFunc("/register", register)
 	//mux.HandleFunc("/insert", insert)
 	http.HandleFunc("/query", query)
@@ -30,93 +30,79 @@ func main() {
 	//mux.HandleFunc("/querygrade", querygrade)
 	//mux.HandleFunc("/commitanwer", commitanwer)
 	http.HandleFunc("/queryquesbank", queryquesbank)
+	http.HandleFunc("/querypaper", querypaper)
+	http.HandleFunc("/querypapers", querypapers)
 	http.HandleFunc("/upload", upload)
+
 	//mux.HandleFunc("/index", index)
 
 	// http.HandleFunc("/123", NotFoundHandler)
 
 	http.Handle("/", http.FileServer(http.Dir("C:/Users/ajini/Desktop/goproject/src/teachinghelper")))
-	http.HandleFunc("/index", Index)
+	// http.HandleFunc("/index", Index)
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("index.html")
-	if err != nil {
-		log.Println(err)
-	}
-	t.Execute(w, nil)
-}
-
-// func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.URL.Path == "/" {
-// 		http.Redirect(w, r, "/index.html", http.StatusFound)
+// func Index(w http.ResponseWriter, r *http.Request) {
+// 	t, err := template.ParseFiles("index.html")
+// 	if err != nil {
+// 		log.Println(err)
 // 	}
+// 	t.Execute(w, nil)
 // }
 
-/*
+func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/" {
+		http.Redirect(w, r, "/index.html", http.StatusFound)
+	}
+}
+
 // login 登陆
 func login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") // 允许跨域
-	//r.ParseForm()                                    // 解析参数，默认是不会解析的
+	fmt.Println("method:", r.Method)                   // 获取请求的方法
 
-	// 在控制台上输出信息
-	//fmt.PrintIn("Form: ", r.Form)
-	//fmt.PrintIn("Path: ", r.URL.Path)
-
-	//username, found1 := r.Form["username"]
-	//password, found2 := r.Form["password"]
-
-	//
-	body, _ := ioutil.ReadAll(r.Body)
-	var user User
-	if err := json.Unmarshal(body, &user); err != nil {
-		fmt.Println(err)
-	}
-
-	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8") //登陆msyql
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	defer db.Close()
-
-	var row *sql.Row
-	row = db.QueryRow("select * from login.users where username = ? and password = ?", user.Username, user.Password)
-	var user_name, pass_word string
-	err = row.Scan(&user_name, &pass_word) // 遍历结果
-
-	if err != nil {
-		arr := &result{
-			500,
-			"登陆失败",
-			//[]string{},
-		}
-		b, json_err := json.Marshal(arr) // json化结果集
-		if json_err != nil {
-			fmt.Println("encoding faild")
-		} else {
-			io.WriteString(w, string(b)) // 返回结果
-		}
+	if r.Method == "GET" {
+		// 显示登陆界面
+		t, _ := template.ParseFiles("view/login.html")
+		t.Execute(w, nil)
 	} else {
-		arr := &result{
-			200,
-			"登陆成功",
-			//[]string{},
+		// 请求的是登陆数据，那么执行登陆的逻辑判断
+		r.ParseForm() // 解析参数，默认是不会解析的
+		// 在控制台上输出信息
+		fmt.Println("Form: ", r.Form)
+		fmt.Println("Path: ", r.URL.Path)
+		username := r.Form["username"][0]
+		password := r.Form["password"][0]
+
+		db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8") //登陆msyql
+		if err != nil {
+			fmt.Println(err)
 		}
-		b, json_err := json.Marshal(arr) // json化结果集
-		if json_err != nil {
-			fmt.Println("encoding faild")
+
+		defer db.Close()
+
+		var row *sql.Row
+		row = db.QueryRow("select * from login.users where username = ? and password = ?", username, password)
+		var user_name, pass_word string
+		err = row.Scan(&user_name, &pass_word) // 遍历结果
+
+		if err != nil {
+			w.WriteHeader(406)
+			fmt.Println(err)
 		} else {
-			io.WriteString(w, string(b)) // 返回结果
+			w.WriteHeader(200)
+			t, err := template.ParseFiles("index.html")
+			if err != nil {
+				log.Println(err)
+			}
+			t.Execute(w, nil)
 		}
 	}
 }
-
-*/
 
 // 注册
 func register(w http.ResponseWriter, r *http.Request) {

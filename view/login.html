@@ -81,25 +81,25 @@
 
 <body>
 
-    <form action="/my-handling-form-page" method="post">
+    <form action="http://localhost:8080/login" method="post">
 
         <div>
 
-          <label for="name">Name:</label> <input type="text" id="name" name="user_name">
+          <label for="name">用户名:</label> <input type="text" id="name" name="username">
 
         </div>
 
         <div>
 
-          <label for="mail">E-mail:</label> <input type="email" id="mail" name="user_mail">
+          <label for="mail">密码:</label> <input type="password" id="mail" name="password">
 
         </div>
 
-        <div>
+        <!-- <div>
 
           <label for="msg">Message:</label> <textarea id="msg" name="user_message"></textarea>
 
-        </div>
+        </div> -->
 
         <div class="button">
 
@@ -114,6 +114,13 @@
 
 
 </html>
+
+<script>
+
+
+   // window.location.href="../index.html"
+
+</script>
 
 
 

@@ -24,7 +24,7 @@
       
         <div style="float:left;margin-left: 30px;margin-top: 25px;color:#FFF;">英语教学辅助.icon</div>
         <ul style="list-style:none">
-          <li style="float:left;margin-left:100px;margin-top:25px;color:#fff">新建试卷</li>
+          <li style="float:left;margin-left:100px;margin-top:25px;color:#fff"><a href="view/querypapers.html">我的试卷</a></li>
           <li class="a1"><a href="view/querydatas.html">学生成绩管理</a></li>
           <li class="a1">已完成测试</li>
           <li class="a1">APP下载</li>
@@ -50,48 +50,48 @@
 
 
 
-          <div id="second"  style="width:40%;height:90%;border:1px solid;float:left;overflow:auto;overflow-x:hidden;">
-              <legend>试卷</legend>
-              <!-- 可以放置的地方 -->
-              <div id="diva" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-              <!-- 设置按钮 -->
-              <button id= "button1"> 上一题 </button>
-              <button id= "button2"> 下一题 </button>
-              <button id= "button3"> 生成试卷 </button>
-              
+  <div id="second"  style="width:40%;height:90%;border:1px solid;float:left;overflow:auto;overflow-x:hidden;">
+      <legend>试卷</legend>
+      <!-- 可以放置的地方 -->
+      <div id="diva" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      <!-- 设置按钮 -->
+      <button id= "button1"> 上一题 </button>
+      <button id= "button2"> 下一题 </button>
+      <button id= "button3"> 生成试卷 </button>
+      
+  </div>
+
+
+
+    <!-- 右边部分,整体 -->
+    <div id="third"  style="width:7%;height:60%;float:left;display:table-cell;margin-left:5%;">                
+        <div class="select_contain">
+      <div class="select_item clearfix left">
+        <div class="select_module_con left">
+          <div class="select_result">
+            <span>选择题型</span>
+            <div class="triangle"></div>
           </div>
-
-
-
-                      <!-- 右边部分,整体 -->
-                      <div id="third"  style="width:7%;height:60%;float:left;display:table-cell;margin-left:5%;">                
-                          <div class="select_contain">
-                        <div class="select_item clearfix left">
-                          <div class="select_module_con left">
-                            <div class="select_result">
-                              <span>选择题型</span>
-                              <div class="triangle"></div>
-                            </div>
-                            <ul>
-                              <li id = "all">不限</li>
-                              <li id = "choose">选择题</li>
-                              <li id = "fill">填空题</li>
-                              <li>判断题</li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                      </div>
+          <ul>
+            <li id = "all">不限</li>
+            <li id = "choose">选择题</li>
+            <li id = "fill">填空题</li>
+            <li>判断题</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    </div>
                       
 
                       
-                      <!-- 右边部分 -->
-                      <div id="fourth"  style="width:40%;height:90%;border:1px solid;overflow:auto">
-                           
-                        <!-- 显示题目，每个题目都可以拖动 -->
-                        <div id = "questions"></div>
-              
-                      </div>
+    <!-- 右边部分 -->
+    <div id="fourth"  style="width:40%;height:90%;border:1px solid;overflow:auto">
+          
+      <!-- 显示题目，每个题目都可以拖动 -->
+      <div id = "questions"></div>
+
+    </div>
             
     </main>
   
@@ -109,7 +109,7 @@
 
 <script src="http://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
 <script src="static/js/main.js"></script>
-
+<script src="static/js/index.js"></script>
 
 
 

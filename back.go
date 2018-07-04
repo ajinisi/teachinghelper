@@ -1,12 +1,18 @@
 package main
 
 import (
+	"crypto/md5"
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"html/template"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -136,6 +142,8 @@ func queryquesbank(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
+	defer rows.Close()
+
 	var temp string
 	var questions []interface{}
 	var question interface{}
@@ -169,13 +177,138 @@ func queryquesbank(w http.ResponseWriter, r *http.Request) {
 func upload(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
 
-	body, _ := ioutil.ReadAll(r.Body)
-	//var str = string(body)
+	fmt.Println("method:", r.Method) //获取请求的方法
+	if r.Method == "GET" {
+		crutime := time.Now().Unix()
+		h := md5.New()
+		io.WriteString(h, strconv.FormatInt(crutime, 10))
+		token := fmt.Sprintf("%x", h.Sum(nil))
 
-	//log.Println(str)
-	//var d1 = []byte(str)
-	err2 := ioutil.WriteFile("C:/Users/ajini/Desktop/goproject/src/teachingsite/view/test.html", body, 0666)
-	if err2 != nil {
-		log.Println(err2)
+		t, _ := template.ParseFiles("upload.gtpl")
+		t.Execute(w, token)
+	} else {
+		// 设置最大内存
+		r.ParseMultipartForm(32 << 20)
+		// 获取上面文件的句柄
+		file, handler, err := r.FormFile("uploadfile")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		defer file.Close()
+		fmt.Fprintf(w, "%v", handler.Header)
+		f, err := os.OpenFile("view/papers/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		defer f.Close()
+		io.Copy(f, file)
 	}
+}
+
+// 查询试卷
+func querypaper(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+
+	// r.ParseForm() // 解析参数，默认是不会解析的
+	// // 在控制台上输出信息
+	// fmt.Println("Form: ", r.Form)
+	// fmt.Println("Path: ", r.URL.Path)
+	// //username := r.Form["username"][0]
+	// date := r.Form["date"][0]
+
+	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
+	if err != nil {
+		//fmt.Println(err)
+		fmt.Printf("连接数据库失败")
+	}
+
+	// a := []int{5, 2, 7, 1}
+	// str:="QUES->'$.id'=0"
+	// for _, s := range a {
+	// 	str += " or QUES->'$.id'=" + string(s)
+	// }
+
+	var temp1 string
+	row := db.QueryRow("SELECT URL FROM login.paperbank where id=1")
+	if err := row.Scan(&temp1); err != nil {
+		log.Fatal(err)
+	}
+
+	// rows, err := db.Query("SELECT QUES FROM login.questionbank")
+	// rows, err := db.Query("SELECT QUES FROM login.questionbank where QUES->'$.type'='fill'")
+	rows, err := db.Query("SELECT QUES FROM login.questionbank where QUES->'$.id' in " + temp1) // order by field(QUES->'$.id',5,2,7,1)")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	var temp string
+	var questions []interface{}
+	var question interface{}
+
+	for rows.Next() {
+		if err := rows.Scan(&temp); err != nil {
+			log.Fatal(err)
+		}
+		// 未知类型的推荐处理方法
+
+		json.Unmarshal([]byte(temp), &question)
+		questions = append(questions, question)
+
+		//貌似也可以
+		// if err := rows.Scan(&question); err != nil {
+		// 	log.Fatal(err)
+		// }
+		// questions = append(questions, question)
+
+	}
+
+	ret, json_err := json.Marshal(&questions) // json化结果集
+	if json_err != nil {
+		log.Println(json_err)
+	}
+	fmt.Fprint(w, string(ret)) // json转化为字符串发送
+	//log.Println(string(ret))
+	// w.WriteHeader(200)
+}
+
+// 查询用户表
+func querypapers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+	//ret, _ := json.Marshal("wang")
+
+	body, _ := ioutil.ReadAll(r.Body)
+	var username = string(body)
+
+	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
+	if err != nil {
+		//fmt.Println(err)
+		fmt.Printf("连接数据库失败")
+	}
+
+	// Query 查询
+	rows, err := db.Query("SELECT id FROM login.paperbank where username=?", username)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var temp int
+	var papers []int
+	for rows.Next() {
+		if err := rows.Scan(&temp); err != nil {
+			log.Fatal(err)
+		}
+		papers = append(papers, temp)
+	}
+
+	ret, json_err := json.Marshal(&papers) // json化结果集
+	if json_err != nil {
+		log.Println(json_err)
+	}
+	fmt.Fprint(w, string(ret)) // json转化为字符串发送
+
 }

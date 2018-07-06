@@ -9,7 +9,11 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 	// 驱动的引用与连接
+	_ "teachinghelper/memory"
+	"teachinghelper/session"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -17,6 +21,18 @@ import (
 type User struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+// 在main包中创建一个全局的session管理器
+var globalSessions *session.Manager
+
+//然后在init函数中初始化
+func init() {
+	globalSessions, _ = session.NewManager("memory", "gosessionid", 3600)
+
+	// 管理销毁
+	go globalSessions.GC()
+	fmt.Println("fd")
 }
 
 func main() {
@@ -32,7 +48,9 @@ func main() {
 	http.HandleFunc("/queryquesbank", queryquesbank)
 	http.HandleFunc("/querypaper", querypaper)
 	http.HandleFunc("/querypapers", querypapers)
+	http.HandleFunc("/insertpaper", insertpaper)
 	http.HandleFunc("/upload", upload)
+	// http.HandleFunc("/insertque", insertque)
 
 	//mux.HandleFunc("/index", index)
 
@@ -63,15 +81,21 @@ func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 // login 登陆
 func login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") // 允许跨域
-	fmt.Println("method:", r.Method)                   // 获取请求的方法
+
+	sess := globalSessions.SessionStart(w, r)
+
+	r.ParseForm()                    // 解析参数，默认是不会解析的
+	fmt.Println("method:", r.Method) // 获取请求的方法
 
 	if r.Method == "GET" {
 		// 显示登陆界面
 		t, _ := template.ParseFiles("view/login.html")
-		t.Execute(w, nil)
+		// ??
+		w.Header().Set("Content-Type", "text/html")
+		t.Execute(w, sess.Get("username"))
 	} else {
 		// 请求的是登陆数据，那么执行登陆的逻辑判断
-		r.ParseForm() // 解析参数，默认是不会解析的
+
 		// 在控制台上输出信息
 		fmt.Println("Form: ", r.Form)
 		fmt.Println("Path: ", r.URL.Path)
@@ -94,6 +118,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(406)
 			fmt.Println(err)
 		} else {
+
+			sess.Set("username", username)
+
 			w.WriteHeader(200)
 			t, err := template.ParseFiles("index.html")
 			if err != nil {
@@ -145,6 +172,42 @@ func register(w http.ResponseWriter, r *http.Request) {
 		//io.WriteString(w, arr) // 返回结果
 
 	}
+}
+
+// Cookie
+
+// expiration := time.Now()
+// expiration = expiration.AddDate(1, 0, 0)
+// cookie := http.Cookie{Name: "username", Value: "astaxie", Expires: expiration}
+// http.SetCookie(w, &cookie)
+
+// cookie, _ := r.Cookie("username")
+// fmt.Fprint(w, cookie)
+
+// http.SetCookie(w ResponseWriter, cookie *Cookie){
+
+// }
+
+// 当我们进行了任意一个session操作，都会对Session实体进行更新，都会触发对最后访问时间的修改，
+// 这样当GC的时候就不会误删除还在使用的Session实体
+func count(w http.ResponseWriter, r *http.Request) {
+	sess := globalSessions.SessionStart(w, r)
+	createtime := sess.Get("createtime")
+	if createtime == nil {
+		sess.Set("createtime", time.Now().Unix())
+	} else if (createtime.(int64) + 360) < (time.Now().Unix()) {
+		globalSessions.SessionDestroy(w, r)
+		sess = globalSessions.SessionStart(w, r)
+	}
+	ct := sess.Get("countnum")
+	if ct == nil {
+		sess.Set("countnum", 1)
+	} else {
+		sess.Set("countnum", (ct.(int) + 1))
+	}
+	t, _ := template.ParseFiles("count.gtpl")
+	w.Header().Set("Content-Type", "text/html")
+	t.Execute(w, sess.Get("countnum"))
 }
 
 /*

@@ -50,5 +50,9 @@ button1.onclick = function(){
 }
 
 button3.onclick = function(){
-	makepaper();
+	showpaper();
+}
+
+button4.onclick = function(){
+	insertpaper();
 }

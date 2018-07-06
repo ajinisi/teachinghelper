@@ -149,15 +149,16 @@ var questions = [
 
 function showquestion(i){
 
+
 	// 可以拖动的东西 
 	//document.getElementById('questions').innerHTML+="<div id='div"+i+"' ondrop='drop(event)' ondragover='allowDrop(event)'>"+"<div draggable='true' ondragstart='drag(event)' id='question"+i+"' ></div>"+"</div>"
 	document.getElementById('questions').innerHTML+=
 			`<div class='div' ondrop='drop(event)' ondragover='allowDrop(event)'> 
-					<div draggable='true' ondragstart='drag(event)' id='question${i}' ></div>
+					<div draggable='true' ondragstart='drag(event)' id='question${i+1}'></div>
 			</div>`
-
+	
 	// 显示第i题
-	document.getElementById('question'+i).innerHTML="<div id ="+"stem"+i+"> </div>"+"<div id = "+"options"+i+"> </div>"
+	document.getElementById('question'+(i+1)).innerHTML="<div id ="+"stem"+i+" > </div>"+"<div id = "+"options"+i+"> </div>"
 
 
 	// 显示第i题 题干
@@ -326,24 +327,25 @@ function select(){
 
 
 //赋值到另一张html中
-function makepaper(){   
+function showpaper(){   
 
 		
 	// 新建一个空白
 	var newWim = window.open('','_blank','');
 	
 
-	var html = `<form action="http://localhost:8080" method="post">
-    				<fieldset>
-      					<legend>试卷</legend>`
-	html += document.getElementById("diva").innerHTML
-	html += `<button id="button" type="submit"> 确认提交 </button>`
-	html += `</fieldset></form>`
+	// var html = `<form action="http://localhost:8080/insertpaper" method="post">
+    				// <fieldset>
+      					// <legend>试卷</legend>`
+	html = document.getElementById("diva").innerHTML
+	// html += `<button id="button" type="submit"> 确认提交 </button>`
+	// html += `</fieldset></form>`
 	
 	// window.setTimeout(function(){
 	// 	newWim.document.body.innerHTML+=html;
   	// },10);
-		
+	
+
 	newWim.document.write(html)
 	newWim.document.close()
 	
@@ -351,8 +353,52 @@ function makepaper(){
 }
 
 
+
+
+
+
+function insertpaper(){  
+	
+
+	var que=document.getElementById("diva").childNodes//.getElementsByClassName('div')
+	console.log(que)
+	var sen=new Array(que.length);
+	for(var i=0;i<que.length;i++){
+		sen[i]=que[i].id.slice(8)
+	}
+	sen.join(",")
+	alert(sen)
+	//userName = document.f1.username.value;      
+	//passWord = document.f1.password.value;        
+		  
+	//var url = "LoginServlet?username="+userName+"&password="+passWord+"";         
+	var url = "http://localhost:8080/insertpaper";          
+	
+	// // 1.创建XMLHttpRequest组建      
+	xmlHttpRequest = createXmlHttpRequest();      
 	
 
 
+	// // 2.注册回调函数，函数名后面不需要加括号      
+	xmlHttpRequest.onreadystatechange = statechanged1;      
+		  
+	// // 3.初始化XMLHttpRequest组建      
+	xmlHttpRequest.open("POST",url,true);
+	// //xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");      
+		  
+	// //4.发送请求      
+	xmlHttpRequest.send(sen);
+	
+	
 
+  }   
 
+  
+  function statechanged1(){
+	var req = xmlHttpRequest;
+	if(req.readyState == 4 ){
+	  if(req.status == 200){
+		  alert("sucess")
+	  }
+	}
+}

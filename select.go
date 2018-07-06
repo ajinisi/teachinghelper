@@ -207,7 +207,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// 查询试卷
+// 查询试卷内容
 func querypaper(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
 
@@ -218,28 +218,24 @@ func querypaper(w http.ResponseWriter, r *http.Request) {
 	// //username := r.Form["username"][0]
 	// date := r.Form["date"][0]
 
+	body, _ := ioutil.ReadAll(r.Body)
+	var num = string(body)
+
 	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
 	if err != nil {
 		//fmt.Println(err)
 		fmt.Printf("连接数据库失败")
 	}
 
-	// a := []int{5, 2, 7, 1}
-	// str:="QUES->'$.id'=0"
-	// for _, s := range a {
-	// 	str += " or QUES->'$.id'=" + string(s)
-	// }
-
 	var temp1 string
-	row := db.QueryRow("SELECT URL FROM login.paperbank where id=1")
+	row := db.QueryRow("SELECT URL FROM login.paperbank where id=?", num)
 	if err := row.Scan(&temp1); err != nil {
 		log.Fatal(err)
 	}
 
 	// rows, err := db.Query("SELECT QUES FROM login.questionbank")
 	// rows, err := db.Query("SELECT QUES FROM login.questionbank where QUES->'$.type'='fill'")
-	rows, err := db.Query("SELECT QUES FROM login.questionbank where QUES->'$.id' in " + temp1) // order by field(QUES->'$.id',5,2,7,1)")
-
+	rows, err := db.Query("SELECT QUES FROM login.questionbank where QUES->'$.id' in (" + temp1 + ")" + "order by field(QUES->'$.id'," + temp1 + ")")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -276,13 +272,58 @@ func querypaper(w http.ResponseWriter, r *http.Request) {
 	// w.WriteHeader(200)
 }
 
-// 查询用户表
+// 查询全部试卷
 func querypapers(w http.ResponseWriter, r *http.Request) {
+
 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
 	//ret, _ := json.Marshal("wang")
 
+	// 验证是否登陆
+	sess := globalSessions.SessionStart(w, r)
+	if sess.Get("username") == nil {
+		w.WriteHeader(403)
+		t, _ := template.ParseFiles("view/login.html")
+		// ??
+		w.Header().Set("Content-Type", "text/html")
+		t.Execute(w, nil)
+	} else {
+		body, _ := ioutil.ReadAll(r.Body)
+		var username = string(body)
+
+		db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
+		if err != nil {
+			//fmt.Println(err)
+			fmt.Printf("连接数据库失败")
+		}
+
+		// Query 查询
+		rows, err := db.Query("SELECT id FROM login.paperbank where username=?", username)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var temp int
+		var papers []int
+		for rows.Next() {
+			if err := rows.Scan(&temp); err != nil {
+				log.Fatal(err)
+			}
+			papers = append(papers, temp)
+		}
+
+		ret, json_err := json.Marshal(&papers) // json化结果集
+		if json_err != nil {
+			log.Println(json_err)
+		}
+		fmt.Fprint(w, string(ret)) // json转化为字符串发送
+	}
+}
+
+func insertpaper(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+
 	body, _ := ioutil.ReadAll(r.Body)
-	var username = string(body)
+	var paper = string(body)
 
 	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
 	if err != nil {
@@ -290,25 +331,13 @@ func querypapers(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("连接数据库失败")
 	}
 
-	// Query 查询
-	rows, err := db.Query("SELECT id FROM login.paperbank where username=?", username)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// 插入
+	stmt, err := db.Prepare(`INSERT paperbank (USERNAME,URL) values ("root",?)`)
+	res, err := stmt.Exec(paper)
+	id, err := res.LastInsertId()
+	fmt.Println(id)
 
-	var temp int
-	var papers []int
-	for rows.Next() {
-		if err := rows.Scan(&temp); err != nil {
-			log.Fatal(err)
-		}
-		papers = append(papers, temp)
-	}
-
-	ret, json_err := json.Marshal(&papers) // json化结果集
-	if json_err != nil {
-		log.Println(json_err)
-	}
-	fmt.Fprint(w, string(ret)) // json转化为字符串发送
+	// 返回“插入成功”
+	w.WriteHeader(200)
 
 }

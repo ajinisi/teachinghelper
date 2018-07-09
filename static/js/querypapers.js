@@ -57,7 +57,10 @@ function statechanged2(){
     }
     else if(req.status == 401 || req.status == 403)
     {
+
+      window.location = "http://localhost:8080/view/login.html";
       alert("request url is forbidden or not authorized to visit.");
+      
     }
     else
     {

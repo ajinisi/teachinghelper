@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -77,44 +78,82 @@ func insert(w http.ResponseWriter, r *http.Request) {
 }
 
 // 插入原创题目
-// func insertque(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+func insertque(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
 
-// 	r.ParseForm() // 解析参数，默认是不会解析的
-// 	// 在控制台上输出信息
-// 	fmt.Println("Form: ", r.Form)
-// 	fmt.Println("Path: ", r.URL.Path)
-// 	type1 := r.Form["type"][0]
-// 	grade := r.Form["grade"][0]
-// 	stars := r.Form["stars"][0]
-// 	answers := r.Form["answers"][0]
-// 	content := r.Form["content"][0]
-// 	options := r.Form["options"][0]
+	r.ParseForm() // 解析参数，默认是不会解析的
+	// 在控制台上输出信息
+	fmt.Println("Form: ", r.Form)
+	fmt.Println("Path: ", r.URL.Path)
 
-// 	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8") //登陆msyql
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
+	// 接收到的数据处理
+	id := r.Form["id"][0]
+	id1, _ := strconv.Atoi(id)
+	type1 := r.Form["type"][0]
+	grade := r.Form["grade"][0]
+	grade1, _ := strconv.Atoi(grade)
+	stars := r.Form["stars"][0]
+	stars1, _ := strconv.Atoi(stars)
 
-// 	defer db.Close()
+	content := r.Form["content"][0]
 
-// 	// 转换为json字符串，存储在数据库中
-// 	temp, err := json.Marshal()
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
+	options := r.Form["options"]
+	answers := r.Form["answers"]
 
-// 	temp1 := string(temp)
+	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8") //登陆msyql
+	if err != nil {
+		fmt.Println(err)
+	}
 
-// 	// 插入
-// 	stmt, err := db.Prepare(`INSERT questionbank (QUES) values (?)`)
-// 	res, err := stmt.Exec(temp1)
-// 	id, err := res.LastInsertId()
-// 	fmt.Println(id)
+	defer db.Close()
 
-// 	// 返回“插入成功”
-// 	w.WriteHeader(200)
-// }
+	// insert into login.questionbank (ques) values ('{
+	// 	"id":13,
+	// 	"type": "single",
+	// 	"content": "Once___,the book is likely to be popular.",
+	// 	"options": ["print","printing","to print","printed"],
+	// 	"answers":[3],
+	// 	"grade":3,
+	// 	"stars":5
+	// }');
+
+	type Question1 struct {
+		ID      int      `json:"id"`
+		Type    string   `json:"type"`
+		Content string   `json:"content"`
+		Options []string `json:"options"`
+		Answers []string `json:"answers"`
+		Grade   int      `json:"grade"`
+		Stars   int      `json:"stars"`
+	}
+
+	var que = &Question1{
+		id1,
+		type1,
+		content,
+		options,
+		answers,
+		grade1,
+		stars1,
+	}
+
+	// 转换为json字符串，存储在数据库中
+	temp, err := json.Marshal(que)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	temp1 := string(temp)
+
+	// 插入
+	stmt, err := db.Prepare(`INSERT into login.questionbank (QUES) values (?)`)
+	res, err := stmt.Exec(temp1)
+	id2, err := res.LastInsertId()
+	fmt.Println(id2)
+
+	// 返回“插入成功”
+	w.WriteHeader(200)
+}
 
 // querygrade 计算学生的成绩并返回
 func querygrade(w http.ResponseWriter, r *http.Request) {

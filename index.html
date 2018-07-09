@@ -2,13 +2,11 @@
 <html lang="zh-cn">
 
 <head>
-  <title>html文档</title>
+  <title>首页</title>
 
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
   <link rel="stylesheet" type="text/css" href="static/css/style.css" charset="utf-8">
-
-
 </head>
 
 
@@ -23,13 +21,13 @@
     <header>
       
         <div style="float:left;margin-left: 30px;margin-top: 25px;color:#FFF;">英语教学辅助.icon</div>
-        <ul style="list-style:none">
-          <li style="float:left;margin-left:100px;margin-top:25px;color:#fff"><a href="view/querypapers.html">我的试卷</a></li>
+        <ul style="list-style:none;float:left;margin-left:100px;">
+          <li class="a1"><a href="view/querypapers.html">我的试卷</a></li>
           <li class="a1"><a href="view/querydatas.html">学生成绩管理</a></li>
-          <li class="a1">已完成测试</li>
-          <li class="a1">APP下载</li>
-          <li class="a1"> <a href="view/queryusers.html">学生信息管理</a> </li>
-          <li class="a1" > <a href="view/about.html">帮助中心</a> </li>
+          <li class="a1"><a href="view/dothetest.html">已完成测试</a></li>
+          <li class="a1"><a href="view/insertque.html">新建题目</a></li>
+          <li class="a1"><a href="view/queryusers.html">学生信息管理</a> </li>
+          <li class="a1"><a href="view/about.html">帮助中心</a> </li>
         </ul>
         <div style="float:left;width: auto;height: 100%;margin-left: 30px;margin-bottom: 25px;">
           <form method="POST" action="查找数据库中的数据" >
@@ -37,7 +35,7 @@
             <input type="submit" value="搜索" style="margin-top: 25px;margin-right: 150px;">
           </form>   
         </div>
-        <div style="float:left;height: 100%;width: 40px;margin-left: -50px;margin-top: 18px;">
+        <div style="float:right;height: 100%;width: 40px;margin-right:30px;margin-top: 18px;">
           <img src="view/images/11019.jpg" style="width: 40px;height: 40px;"></img>
          </div> 
       
@@ -51,12 +49,11 @@
 
 
   <div id="second"  style="width:40%;height:90%;border:1px solid;float:left;overflow:auto;overflow-x:hidden;">
-      <legend>试卷</legend>
+      <div style="margin:auto">试卷</div>
       <!-- 可以放置的地方 -->
       <div id="diva" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
       <!-- 设置按钮 -->
-      <button id= "button1"> 上一题 </button>
-      <button id= "button2"> 下一题 </button>
+
       <button id= "button3"> 预览试卷 </button>
       <button id= "button4"> 确认提交 </button>
   </div>

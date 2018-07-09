@@ -54,7 +54,9 @@ function querybank(){
 	  }
 	  else if(req.status == 401 || req.status == 403)
 	  {
+		
 		alert("request url is forbidden or not authorized to visit.");
+		
 	  }
 	  else
 	  {

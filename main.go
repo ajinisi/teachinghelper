@@ -50,14 +50,20 @@ func main() {
 	http.HandleFunc("/querypapers", querypapers)
 	http.HandleFunc("/insertpaper", insertpaper)
 	http.HandleFunc("/upload", upload)
-	// http.HandleFunc("/insertque", insertque)
+	http.HandleFunc("/insertque", insertque)
 
 	//mux.HandleFunc("/index", index)
 
-	// http.HandleFunc("/123", NotFoundHandler)
+	// 重定向第一种写法
+	http.Handle("/123", http.RedirectHandler("view/login.html", http.StatusFound))
+	// 重定向第二种写法
+	//http.HandleFunc("/123", Redir)
 
+	// 文件服务器
 	http.Handle("/", http.FileServer(http.Dir("C:/Users/ajini/Desktop/goproject/src/teachinghelper")))
-	// http.HandleFunc("/index", Index)
+
+	// 未找到
+	http.Handle("/234", http.NotFoundHandler())
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal("ListenAndServe: ", err)
@@ -72,11 +78,12 @@ func main() {
 // 	t.Execute(w, nil)
 // }
 
-func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/" {
-		http.Redirect(w, r, "/index.html", http.StatusFound)
-	}
-}
+// // 重定向第二种写法
+// func Redir(w http.ResponseWriter, r *http.Request) {
+// 	if r.URL.Path == "/123" {
+// 		http.Redirect(w, r, "view/login.html", http.StatusFound)
+// 	}
+// }
 
 // login 登陆
 func login(w http.ResponseWriter, r *http.Request) {

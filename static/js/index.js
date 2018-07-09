@@ -2,6 +2,8 @@
 var questions
 querybank();	
 
+
+
 $(all).bind("click",function(){    
 	// 连续显示所有题目
 	document.getElementById('questions').innerHTML=""
@@ -34,20 +36,7 @@ $(function(){
 	select(); 
 })
 
-/********* 上一题 **********/
 
-// 第几题
-var i = 2
-
-button2.onclick = function(){
-    i++;
-    showquestion(i);
-}
-
-button1.onclick = function(){
-    i--;
-    showquestion(i);
-}
 
 button3.onclick = function(){
 	showpaper();

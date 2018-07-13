@@ -10,7 +10,7 @@ button2.onclick = function(){
     } else {
         alert("已是最后一题")
     }
-
+	saveanswers()
 }
 
 button1.onclick = function(){
@@ -19,7 +19,8 @@ button1.onclick = function(){
     showquestion(i);
     } else {
         alert("已是第一题")
-    }
+	}
+	saveanswers()
 }
 
 
@@ -55,8 +56,8 @@ querypaper(1)
 
 
 // 选项卡
-//var div = document.createElement("div");
-//document.body.appendChild(div);
+var div = document.createElement("div");
+document.body.appendChild(div);
 
 var butto = document.getElementById("buttons")
 
@@ -84,7 +85,8 @@ showquestion(0);
 
 
 window.setTimeout(function(){
-    bind()
+	bind()
+	saveanswers()
 },30)   
 
 function bind(){
@@ -191,4 +193,26 @@ function showquestion(i){
 
     
 
+}
+
+var answers = new Array()
+
+
+function saveanswers(){
+	var btns = document.querySelectorAll(`[name="identity${i}"]`);
+					
+	function bgChange(o){                        
+		answers[i] = o.value
+		console.log(answers)
+	} 
+
+	for(var j=0;j<btns.length;j++){
+		a1(j)
+	}
+
+	function a1(j){
+		btns[j].addEventListener('click', function(){
+			bgChange(eval('o'+i+j))
+		})
+	}
 }

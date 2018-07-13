@@ -7,93 +7,41 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
   <link rel="stylesheet" type="text/css" href="static/css/style.css" charset="utf-8">
+
+
 </head>
 
 
-
-
 <body>
-
-  <!-- 整体 -->
-  <div id="wrapper" >
-
     <!-- 头部 -->
     <header>
-      
-        <div style="float:left;margin-left: 30px;margin-top: 25px;color:#FFF;">英语教学辅助.icon</div>
-        <ul style="list-style:none;float:left;margin-left:100px;">
-          <li class="a1"><a href="view/querypapers.html">我的试卷</a></li>
-          <li class="a1"><a href="view/querydatas.html">学生成绩管理</a></li>
-          <li class="a1"><a href="view/dothetest.html">已完成测试</a></li>
-          <li class="a1"><a href="view/insertque.html">新建题目</a></li>
-          <li class="a1"><a href="view/queryusers.html">学生信息管理</a> </li>
-          <li class="a1"><a href="view/about.html">帮助中心</a> </li>
-        </ul>
-        <div style="float:left;width: auto;height: 100%;margin-left: 30px;margin-bottom: 25px;">
-          <form method="POST" action="查找数据库中的数据" >
-            <input type="text" name="search" style="margin-top: 25px;">
-            <input type="submit" value="搜索" style="margin-top: 25px;margin-right: 150px;">
-          </form>   
-        </div>
-        <div style="float:right;height: 100%;width: 40px;margin-right:30px;margin-top: 18px;">
-          <img src="view/images/11019.jpg" style="width: 40px;height: 40px;"></img>
-         </div> 
-      
+
+        <img style="grid-column: 1/2;height: 40px" src="view/images/logo.png"></img>
+
+
+        <a href="view/querypapers.html">我的试卷</a>
+        <a href="view/querydatas.html">学生成绩管理</a>
+        <a href="view/dotest.html">已完成测试</a>
+        <a href="view/insertque.html">新建题目</a>
+        <a href="view/makepaper.html">新建试卷</a>
+        <a href="view/queryusers.html">学生信息管理</a>
+        <a href="view/about.html">帮助中心</a>      
+
+        <a style="grid-column: 11/12;" href="view/login.html">登陆</a>
+        <a style="grid-column: 12/13;">注册</a>
 
     </header>
 
+
+
     <!-- 主体 -->
     <main>
+      <!-- 分隔栏 -->
+      <div style="grid-row: 1;grid-column:1/13; background-color: aquamarine"> </div>
 
-
-
-
-  <div id="second"  style="width:40%;height:90%;border:1px solid;float:left;overflow:auto;overflow-x:hidden;">
-      <div style="margin:auto">试卷</div>
-      <!-- 可以放置的地方 -->
-      <div id="diva" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-      <!-- 设置按钮 -->
-
-      <button id= "button3"> 预览试卷 </button>
-      <button id= "button4"> 确认提交 </button>
-  </div>
-
-
-
-    <!-- 右边部分,整体 -->
-    <div id="third"  style="width:7%;height:60%;float:left;display:table-cell;margin-left:5%;">                
-        <div class="select_contain">
-      <div class="select_item clearfix left">
-        <div class="select_module_con left">
-          <div class="select_result">
-            <span>选择题型</span>
-            <div class="triangle"></div>
-          </div>
-          <ul>
-            <li id = "all">不限</li>
-            <li id = "choose">选择题</li>
-            <li id = "fill">填空题</li>
-            <li>判断题</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    </div>
-                      
-
-                      
-    <!-- 右边部分 -->
-    <div id="fourth"  style="width:40%;height:90%;border:1px solid;overflow:auto">
-          
-      <!-- 显示题目，每个题目都可以拖动 -->
-      <div id = "questions" ></div>
-
-    </div>
-            
-    </main>
-  
-  </div>
-
+      <p>百思得智能教学平台 最好的教师辅助助手</p>
+    </main>                 
+                  
   
 </body>
 
@@ -104,10 +52,13 @@
 
 
 
-<script src="http://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
-<script src="static/js/main.js"></script>
-<script src="static/js/index.js"></script>
 
 
+<!-- <li>
+  <form method="POST" action="" >
+    <input type="text" name="search">
+    <input type="submit" value="搜索">
+  </form>   
+</li>
 
-
+ -->

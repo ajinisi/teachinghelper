@@ -12,7 +12,7 @@ function createXmlHttpRequest(){
 
 
 
-function querypapers(a){      
+function querypapers(){      
   //userName = document.f1.username.value;      
   //passWord = document.f1.password.value;        
         
@@ -29,7 +29,7 @@ function querypapers(a){
   //xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");      
         
   //4.发送请求      
-  xmlHttpRequest.send(a);        
+  xmlHttpRequest.send();        
 }         
       
       
@@ -42,10 +42,11 @@ function statechanged2(){
       var papers = eval('(' + json_str + ')'); // 转化为json格式
       // var user = JSON.parse(json_str); // 转化为json格式的另一种方式，较安全
         alert(papers)
-      var TableDate="<th>试卷名</th>"
+      var TableDate="<th>班级名</th><th>试卷名</th>"
       for  (var i=0;i<papers.length;i++){
         TableDate+="<tr>"
-        TableDate+=`<td>`+"<button>"+papers[i]+"</button>"+`</td>`
+        TableDate+=`<td>`+papers[i].classname+`</td>`
+        TableDate+=`<td>`+`<button value=${papers[i].id}>`+papers[i].papername+"</button>"+`</td>`
         TableDate+="</tr>"
       } 
 
@@ -88,7 +89,7 @@ function statechanged2(){
 //}
 
 
-querypapers("root")
+querypapers()
 
 
 
@@ -105,8 +106,8 @@ function binds(){
   
   function bgChange(i){                        
 
-  	querypaper(i);
-    
+  	querypaper(btns[i].value);
+    alert(btns[i].value)
   	window.setTimeout(function(){
       document.getElementById('questions').innerHTML=""
       for  (var i=0;i<questions.length;i++){
@@ -121,7 +122,7 @@ function binds(){
 
 	function a1(j){
 		btns[j].addEventListener('click', function(){
-			bgChange(j+1)
+			bgChange(j)
 		})
 	}
 }

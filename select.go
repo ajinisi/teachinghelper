@@ -132,65 +132,65 @@ func queryquesbank(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
 
 	// 验证是否登陆
-	sess := globalSessions.SessionStart(w, r)
-	if sess.Get("username") == nil {
-		w.WriteHeader(403)
-		// t, err := template.ParseFiles("view/login.html")
-		// if err != nil {
-		// 	log.Println(err)
-		// }
-		// // ??
-		// w.Header().Set("Content-Type", "text/html")
-		// t.Execute(w, nil)
+	// sess := globalSessions.SessionStart(w, r)
+	// if sess.Get("username") == nil {
+	// 	w.WriteHeader(403)
+	// t, err := template.ParseFiles("view/login.html")
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// // ??
+	// w.Header().Set("Content-Type", "text/html")
+	// t.Execute(w, nil)
 
-		// http.Redirect(w, r, "view/login.html", http.StatusFound)
+	// http.Redirect(w, r, "view/login.html", http.StatusFound)
 
-	} else {
+	// } else {
 
-		db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
-		if err != nil {
-			//fmt.Println(err)
-			fmt.Printf("连接数据库失败")
-		}
+	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
+	if err != nil {
+		//fmt.Println(err)
+		fmt.Printf("连接数据库失败")
+	}
 
-		defer db.Close()
+	defer db.Close()
 
-		rows, err := db.Query("SELECT QUES FROM login.questionbank")
-		if err != nil {
+	rows, err := db.Query("SELECT QUES FROM login.questionbank")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	var temp string
+	var questions []interface{}
+	var question interface{}
+
+	for rows.Next() {
+		if err := rows.Scan(&temp); err != nil {
 			log.Fatal(err)
 		}
+		// 未知类型的推荐处理方法
 
-		defer rows.Close()
+		json.Unmarshal([]byte(temp), &question)
+		questions = append(questions, question)
 
-		var temp string
-		var questions []interface{}
-		var question interface{}
+		//貌似也可以
+		// if err := rows.Scan(&question); err != nil {
+		// 	log.Fatal(err)
+		// }
+		// questions = append(questions, question)
 
-		for rows.Next() {
-			if err := rows.Scan(&temp); err != nil {
-				log.Fatal(err)
-			}
-			// 未知类型的推荐处理方法
-
-			json.Unmarshal([]byte(temp), &question)
-			questions = append(questions, question)
-
-			//貌似也可以
-			// if err := rows.Scan(&question); err != nil {
-			// 	log.Fatal(err)
-			// }
-			// questions = append(questions, question)
-
-		}
-
-		ret, json_err := json.Marshal(&questions) // json化结果集
-		if json_err != nil {
-			log.Println(json_err)
-		}
-		fmt.Fprint(w, string(ret)) // json转化为字符串发送
-		//log.Println(string(ret))
-		//w.WriteHeader(200)
 	}
+
+	ret, json_err := json.Marshal(&questions) // json化结果集
+	if json_err != nil {
+		log.Println(json_err)
+	}
+	fmt.Fprint(w, string(ret)) // json转化为字符串发送
+	//log.Println(string(ret))
+	//w.WriteHeader(200)
+	//}
 }
 
 func upload(w http.ResponseWriter, r *http.Request) {
@@ -247,14 +247,14 @@ func querypaper(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var temp1 string
-	row := db.QueryRow("SELECT URL FROM login.paperbank where id=?", num)
+	row := db.QueryRow("SELECT PAPERCONTENT FROM login.paperbank where id=?", num)
 	if err := row.Scan(&temp1); err != nil {
 		log.Fatal(err)
 	}
 
 	// rows, err := db.Query("SELECT QUES FROM login.questionbank")
 	// rows, err := db.Query("SELECT QUES FROM login.questionbank where QUES->'$.type'='fill'")
-	rows, err := db.Query("SELECT QUES FROM login.questionbank where QUES->'$.id' in (" + temp1 + ")" + "order by field(QUES->'$.id'," + temp1 + ")")
+	rows, err := db.Query("SELECT QUES FROM login.questionbank where ID in (" + temp1 + ")" + "order by field(ID," + temp1 + ")")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -287,11 +287,11 @@ func querypaper(w http.ResponseWriter, r *http.Request) {
 		log.Println(json_err)
 	}
 	fmt.Fprint(w, string(ret)) // json转化为字符串发送
-	//log.Println(string(ret))
+
 	// w.WriteHeader(200)
 }
 
-// 查询全部试卷
+// 查询试卷库
 func querypapers(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
@@ -314,20 +314,31 @@ func querypapers(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Query 查询
-		rows, err := db.Query("SELECT ID FROM login.paperbank where username=?", username)
+		rows, err := db.Query("SELECT CLASSNAME,PAPERNAME,ID FROM login.paperbank where username=?", username)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		defer db.Close()
 
-		var temp int
-		var papers []int
+		var temp1, temp2 string
+		var tem int
+		type paper struct {
+			ClassName string `json:"classname"`
+			PaperName string `json:"papername"`
+			ID        int    `json:"id"`
+		}
+		var papers []paper
 		for rows.Next() {
-			if err := rows.Scan(&temp); err != nil {
+			if err := rows.Scan(&temp1, &temp2, &tem); err != nil {
 				log.Fatal(err)
 			}
-			papers = append(papers, temp)
+			var pap = paper{
+				temp1,
+				temp2,
+				tem,
+			}
+			papers = append(papers, pap)
 		}
 
 		ret, json_err := json.Marshal(&papers) // json化结果集

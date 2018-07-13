@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>生成你的试卷</title>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=no" />
+  <link rel="stylesheet" type="text/css" href="../static/css/style.css" charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="../static/css/makepaper.css" charset="utf-8">
+
+
+</head>
+
+
+<body>
+    <!-- 头部 -->
+    <header>
+      <a href="../index.html"> <img style="grid-column: 1/2;height: 40px;" src="../view/images/logo.png" ></img> </a>
+      <a href="querypapers.html">我的试卷</a>
+      <a href="querydatas.html">学生成绩管理</a>
+      <a href="dotest.html">已完成测试</a>
+      <a href="insertque.html">新建题目</a>
+      <a href="makepaper.html">新建试卷</a>
+      <a href="queryusers.html">学生信息管理</a>
+      <a href="about.html">帮助中心</a>  
+          
+      <img style="grid-column: 12/13;height: 40px;" src="images/11019.jpg"></img>
+    </header>
+
+    <!-- 主体 -->
+    <main>
+
+      <!-- 分隔栏 -->
+      <div style="grid-row: 1;grid-column:1/13; background-color: aquamarine"> </div>
+
+
+  <div class="left">
+      
+      <!-- 可以放置的地方 -->
+      <div id="diva" ondrop="drop(event)" ondragover="allowDrop(event)">
+        请从上面方框中添加题目到该试卷
+      </div>
+      <!-- 设置按钮 -->
+      <button id= "button3" style="grid-column:4/6;grid-row:23;margin-top: 1px"> 预览试卷 </button>
+      <button id= "button4" style="grid-column: 7/9;grid-row:23;margin-top:1px"> 确认提交 </button>
+  </div>
+
+
+                           
+    <!-- 右边部分 -->
+    <div class="right">
+      <div class="cj">
+        <a  href="#" style="grid-row: 1/2">题型</a>
+        <a  href="#" style="color:green;grid-row: 1/2" id="all">全部</a>
+        <a  href="#" style="grid-row: 1/2" id='choose'>选择题</a>
+        <a  href="#" style="grid-row: 1/2">填空题</a>
+        <a  href="#" style="grid-row: 1/2">判断题</a>
+
+        <a  href="#" style="grid-row: 2/3">题类</a>
+        <a  href="#" style="color: green;grid-row: 2/3">全部</a>
+        <a  href="#" style="grid-row: 2/3">中考真题</a>
+        <a  href="#" style="grid-row: 2/3">常考题</a>
+        <a  href="#" style="grid-row: 2/3">模拟题</a>
+
+        <a  href="#" style="grid-row: 3/4">难度</a>
+        <a  href="#" style="color: green;grid-row: 3/4">全部</a>
+        <a  href="#" style="grid-row: 3/4">1星</a>
+        <a  href="#" style="grid-row: 3/4">2星</a>
+        <a  href="#" style="grid-row: 3/4">3星</a>
+        <a  href="#" style="grid-row: 3/4">4星</a>
+
+      </div>
+        
+      <!-- 显示题目，每个题目都可以拖动 -->
+      <div id = "questions" >请从上面栏目中根据类型获取题目选项</div>
+    </div>
+            
+    </main>
+
+  
+</body>
+
+
+
+
+</html>
+
+
+<script src="http://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+<script src="../static/js/main.js"></script>
+<script src="../static/js/makepaper.js"></script>
+
+
+
+
+
+<!-- <li>
+  <form method="POST" action="" >
+    <input type="text" name="search">
+    <input type="submit" value="搜索">
+  </form>   
+</li>
+
+ -->

@@ -4,53 +4,41 @@
     <title>html文档</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" type="text/css" href="../static/css/style.css" charset="utf-8">
+
     <script src="../static/js/insertque.js"></script>
 </head>
 
 <body >
 
-  <!-- 整体 -->
-  <div id="wrapper" >
 
-        <!-- 头部 -->
         <header>
-          
-            <div style="float:left;margin-left: 30px;margin-top: 25px;color:#FFF;">英语教学辅助.icon</div>
-            <ul style="list-style:none;float:left;margin-left:100px;">
-              <li class="a1"><a href="querypapers.html">我的试卷</a></li>
-              <li class="a1"><a href="querydatas.html">学生成绩管理</a></li>
-              <li class="a1"><a href="dothetest.html">已完成测试</a></li>
-              <li class="a1"><a href="insertque.html">新建题目</a></li>
-              <li class="a1"><a href="queryusers.html">学生信息管理</a> </li>
-              <li class="a1"><a href="about.html">帮助中心</a> </li>
-            </ul>
-            <div style="float:left;width: auto;height: 100%;margin-left: 30px;margin-bottom: 25px;">
-              <form method="POST" action="查找数据库中的数据" >
-                <input type="text" name="search" style="margin-top: 25px;">
-                <input type="submit" value="搜索" style="margin-top: 25px;margin-right: 150px;">
-              </form>   
-            </div>
-            <div style="float:right;height: 100%;width: 40px;margin-right:30px;margin-top: 18px;">
-              <img src="view/images/11019.jpg" style="width: 40px;height: 40px;"></img>
-             </div> 
-          
-    
+                <img style="grid-column: 1/2;height: 40px;" src="../view/images/logo.png" ></img>
+
+                <a href="querypapers.html">我的试卷</a>
+                <a href="querydatas.html">学生成绩管理</a>
+                <a href="dothetest.html">已完成测试</a>
+                <a href="insertque.html">新建题目</a>
+                <a href="makepaper.html">新建试卷</a>
+                <a href="queryusers.html">学生信息管理</a>
+                <a href="about.html">帮助中心</a>  
+                    
+                <img style="grid-column: 13;height: 40px;" src="images/11019.jpg"></img>
         </header>
 
 
         <main>
 
-  <form action="http://localhost:8080/insertque" method="GET" id="form1">
+  <form style="grid-column: 2/12" action="http://localhost:8080/insertque" method="GET" id="form1">
   <div id="cointainer" style="width:60%;height: 600px;margin-left: 25%">
     <p>请在下列栏目中选择题目的类型</p>
     <div id="first" style="width: 90%;height: 10%">
         <div id="first_1" style="width: 25%;height: 90%;float: left">
-                        <select name="type" style="height: 80%;width: 100%;text-align: center" >
+            <select name="type" style="height: 80%;width: 100%;text-align: center" >
                         <option selected style="display: none;">题目类型</option>
                         <option value="single" >选择题</option>
                         <option value="judge" >判断题</option>
                         <option value="fill">填空题</option>
-        </select> 
+            </select> 
         </div>
         <div id="first_2" style="width: 25%;height: 90%;float: left;">
                 <select name="grade" style="height: 80%;width: 100%;text-align: center" >
@@ -110,7 +98,7 @@
     <div id="third" style="width: 90%;height: 10%;text-align: center">
             <input type="submit" id="submit" value="提交" >
     </div>
-  </div>
+
 </form>
 </main>
 </body>

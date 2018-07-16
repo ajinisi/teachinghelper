@@ -1,12 +1,11 @@
 package main
 
 import (
+	"crypto/md5"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -16,12 +15,6 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 )
-
-// 定义传递数据结构体
-type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
 
 // 在main包中创建一个全局的session管理器
 var globalSessions *session.Manager
@@ -106,8 +99,14 @@ func login(w http.ResponseWriter, r *http.Request) {
 		// 在控制台上输出信息
 		fmt.Println("Form: ", r.Form)
 		fmt.Println("Path: ", r.URL.Path)
-		username := r.Form["username"][0]
-		password := r.Form["password"][0]
+		username, found1 := r.Form["username"]
+		fmt.Println(username)
+		fmt.Println(found1)
+		password, found2 := r.Form["password"]
+		if !(found1 && found2) {
+			io.WriteString(w, "请勿非法访问")
+			return
+		}
 
 		db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8") //登陆msyql
 		if err != nil {
@@ -116,10 +115,18 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 		defer db.Close()
 
+		// 对密码进行加密
+		var post_data PostData
+		post_data.user_name = username[0]
+		post_data.pass_word = password[0]
+
+		var filter_data FilterData = post_data
+		post_data = filter_data.formatData()
+
 		var row *sql.Row
-		row = db.QueryRow("select * from login.users where username = ? and password = ?", username, password)
-		var user_name, pass_word string
-		err = row.Scan(&user_name, &pass_word) // 遍历结果
+		row = db.QueryRow("select * from login.users where username = ? and password = ?", post_data.user_name, post_data.pass_word)
+		var userName, passWord string
+		err = row.Scan(&userName, &passWord) // 遍历结果
 
 		if err != nil {
 			w.WriteHeader(406)
@@ -141,13 +148,13 @@ func login(w http.ResponseWriter, r *http.Request) {
 // 注册
 func register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
-	//r.ParseForm()
-	//username, found1 := r.Form["username"]
-	//password, found2 := r.Form["password"]
-	//if !(found1 && found2) {
-	//io.WriteString(w, "请勿非法访问")
-	//return
-	//}
+	r.ParseForm()
+	username, found1 := r.Form["username"]
+	password, found2 := r.Form["password"]
+	if !(found1 && found2) {
+		io.WriteString(w, "请勿非法访问")
+		return
+	}
 	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
 	if err != nil {
 		io.WriteString(w, "连接数据库失败")
@@ -155,29 +162,28 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close() //在返回前关闭资源（延迟）
 
-	//var post_data PostData
-	//post_data.user_name = username[0]
-	//post_data.pass_word = password[0]
+	var post_data PostData
+	post_data.user_name = username[0]
+	post_data.pass_word = password[0]
 
-	//var filter_data FilterData = post_data
-	//	post_data = filter_data.formatData()
+	var filter_data FilterData = post_data
+	post_data = filter_data.formatData()
 
-	body, _ := ioutil.ReadAll(r.Body)
-	var user User
-	if err := json.Unmarshal(body, &user); err != nil {
-		fmt.Println(err)
-	}
-
-	_, err = db.Exec("insert into login.users (username, password) values(?,?)", user.Username, user.Password) //插入数据
+	_, err = db.Exec("insert into login.users (username, password) values(?,?)", post_data.user_name, post_data.pass_word) //插入数据
 	if err != nil {
 		w.WriteHeader(406)
+		fmt.Println(err)
 		//arr := StatueText(406)
 		//io.WriteString(w, "注册失败") // 返回结果
 	} else {
 		w.WriteHeader(200)
 		//arr := http.StatueText(200)
 		//io.WriteString(w, arr) // 返回结果
-
+		t, err := template.ParseFiles("view/login.html")
+		if err != nil {
+			log.Println(err)
+		}
+		t.Execute(w, nil)
 	}
 }
 
@@ -236,3 +242,23 @@ func mdFormat(data string) string { // 对字符串进行 md5 加密
 	return fmt.Sprintf("%x", t.Sum(nil))
 }
 */
+
+type FilterData interface { //定义数据接口
+	formatData() PostData
+}
+
+type PostData struct { //定义传递数据结构体
+	user_name string
+	pass_word string
+}
+
+func (post_data PostData) formatData() PostData { //格式化数据
+	post_data.pass_word = mdFormat(post_data.pass_word)
+	return post_data
+}
+
+func mdFormat(data string) string { //对字符串进行md5加密
+	t := md5.New()
+	io.WriteString(t, data)
+	return fmt.Sprintf("%x", t.Sum(nil))
+}

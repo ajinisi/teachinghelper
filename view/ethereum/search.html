@@ -1,0 +1,66 @@
+<head>
+
+    <meta charset="utf-8">
+    <title>上链</title>
+    <script src="../../static/js/main.js"></script>
+    <script src="search.js"></script>
+
+</head>
+
+
+
+<body>
+
+    <form action="http://localhost:8081/query" method="get">
+
+
+
+        <!-- <div>
+
+          <label for="msg">Message:</label> <textarea id="msg" name="user_message"></textarea>
+
+        </div> -->
+
+        <div class="button">
+
+          <button type="submit">查看区块链</button>
+
+        </div>
+    
+
+
+    </form>
+    
+
+
+    <button onclick="build()">新建区块</button>
+
+
+
+    <form action="http://localhost:8081/build" method="POST" enctype="application/json">
+
+
+        <div>
+
+            <label for="name">BPM:</label> <input type="text" id="name" name="BPM">
+  
+        </div>
+
+        <!-- <div>
+
+          <label for="msg">Message:</label> <textarea id="msg" name="user_message"></textarea>
+
+        </div> -->
+
+        <div class="button">
+
+          <button type="submit">增加区块</button>
+
+        </div>
+    
+
+
+    </form>
+
+
+</body>

@@ -23,6 +23,11 @@ type Answer struct {
 	Choice   string `json:"choice"`
 }
 
+type User struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 func delete(w http.ResponseWriter, r *http.Request) {
 
 }

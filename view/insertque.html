@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-    <title>html文档</title>
+    <title>插入题目</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" type="text/css" href="../static/css/style.css" charset="utf-8">
 
@@ -16,7 +16,7 @@
 
                 <a href="querypapers.html">我的试卷</a>
                 <a href="querydatas.html">学生成绩管理</a>
-                <a href="dothetest.html">已完成测试</a>
+                <a href="dotest.html">已完成测试</a>
                 <a href="insertque.html">新建题目</a>
                 <a href="makepaper.html">新建试卷</a>
                 <a href="queryusers.html">学生信息管理</a>
@@ -93,13 +93,21 @@
                     </div>
                 <div id="second_42" style="width:60.5%;height:90%;float: left;overflow:auto;overflow-x: hidden;border: 1px solid">
                     </div>
-        </div>   
+        </div> 
+
     </div>
     <div id="third" style="width: 90%;height: 10%;text-align: center">
             <input type="submit" id="submit" value="提交" >
     </div>
 
 </form>
+
+<form enctype="multipart/form-data" action="http://localhost:8080/upload" method="post">
+    <input type="file" name="uploadfile" />
+    <input type="hidden" name="token" value="{{.}}"/>
+    <input type="submit" value="upload" />
+</form>
+
 </main>
 </body>
 </html>

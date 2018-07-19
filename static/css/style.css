@@ -32,7 +32,7 @@ main{
 }
 
 
-
+/* 标题栏 */
 
 header > a {
 	outline: none;
@@ -72,7 +72,7 @@ td{
 
 
 /* 跑道按钮 */
-button {
+.button-rect {
     /* 这个外边距的大小与label和文本输入框之间的间距差不多 */
 	background-color: #4CAF50; /* Green */
 	border: none;
@@ -85,11 +85,27 @@ button {
 	border-radius: 2em;
 	width: 90%;
 }
-button:hover {
+.button-rect:hover {
     background-color: #3e8e41;
 }
-button:focus {
+.button-rect:focus {
 	color: white;
+}
+
+/* 圆形按钮 */
+.button-circ {
+	width:25px;
+	height: 25px;
+	border-radius:10px;
+	background-color: white;
+}
+
+.button-circ:hover {
+	background-color:red;	 
+}
+
+.button-circ:focus {
+	background-color:green;	 
 }
 
 
@@ -196,7 +212,7 @@ form {
     text-align: right;
   }
   
-  input, textarea {
+   input, textarea {
     /* 确保所有文本输入框字体相同
        textarea默认是等宽字体 */
     font: 1em sans-serif;
@@ -209,12 +225,12 @@ form {
     border: 1px solid #999;
   }
   
-  input:focus, textarea:focus {
+   input:focus, textarea:focus {
     /* 给激活的元素一点高亮效果 */
     border-color: #000;
   }
   
-  textarea {
+   textarea {
     /* 使多行文本输入框和它们的label正确对齐 */
     vertical-align: top;
   
@@ -222,7 +238,7 @@ form {
     height: 5em;
   }
   
-  .button {
+  .chan {
     /* 把按钮放到和文本输入框一样的位置 */
     padding-left: 90px; /* 和label的大小一样 */
   }

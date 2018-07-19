@@ -65,21 +65,17 @@ var butto = document.getElementById("buttons")
 // window.onload=function(){
 window.setTimeout(function(){
 
-// 循环生成按钮
-for (var i=0;i<questions.length;i++){
-    button = document.createElement("button")
-    button.id="bu"+i
-    button.className="but"
-    
-    button.textContent=i
-    butto.appendChild(button)
+	// 循环生成按钮
+	for (var i=0;i<questions.length;i++){
+		button = document.createElement("button")
+		button.id="bu"+i
+		button.className="button-circ"
+		button.textContent=i+1
+		butto.appendChild(button)  
+	}
 
-    
-}
-
-// 显示第一道题
-showquestion(0);
-
+	// 默认显示第一道题
+	showquestion(0);
 
 },20)
 
@@ -90,7 +86,7 @@ window.setTimeout(function(){
 },30)   
 
 function bind(){
-    var btns = document.querySelectorAll(`.but`);
+    var btns = document.querySelectorAll(`.button-circ`);
 
     for(var j=0;j<btns.length;j++){
         a1(j)

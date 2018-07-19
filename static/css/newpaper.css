@@ -62,14 +62,14 @@
 	}
 	
 		
-		.cj> a:hover {     
-		background: orange;
-		}
-		
-	 .cj> a:active {
-		background: red;
-		color: white;
-		}
+.cj> a:hover {     
+background: orange;
+}
+
+.cj> a:active {
+background: red;
+color: white;
+}
 
 
 
@@ -97,16 +97,23 @@
 
 	  
 .button-group li{
-	margin-right: -1px; /* Overlap each right button border */
+	margin-right: 5px; /* Overlap each right button border */
   }
   
   .button-group button{
 	font-size: 10px; /* Set the font size, different from inherited 0 */
 	-moz-border-radius: 0;
 	-webkit-border-radius: 0;
-	border-radius: 0;
+	border-radius: 2em;
+	background-color: green;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+	padding: 15px 32px;
+
   }
   
+
   .button-group button:active{
 	-moz-box-shadow: 0 0 1px rgba(0, 0, 0, .2) inset, 5px 0 5px -3px rgba(0, 0, 0, .2) inset, -5px 0 5px -3px rgba(0, 0, 0, .2) inset;
 	-webkit-box-shadow: 0 0 1px rgba(0, 0, 0, .2) inset, 5px 0 5px -3px rgba(0, 0, 0, .2) inset, -5px 0 5px -3px rgba(0, 0, 0, .2) inset;

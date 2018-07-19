@@ -84,11 +84,11 @@
                 </div> 
 
                 <div>
-                        <div >
-                            <a href="#" id="lable" onclick="add()" style="text-decoration : none">添加选项+</a>
-                        </div>
-                        <div id="second_42" style="overflow:auto;overflow-x: hidden;border: 1px solid">
-                        </div>
+                    <div>
+                        <a href="#" id="lable" onclick="add()" style="text-decoration : none">添加选项+</a>
+                    </div>
+                    <div id="second_42" style="overflow:auto;overflow-x: hidden;border: 1px solid">
+                    </div>
                 </div> 
             
 
@@ -96,8 +96,8 @@
 
                 <!-- <input type="text" name="URL" id='u1'> -->
 
-            <div class="button">
-                <button type="submit" id="submit">确认</button>
+            <div class="chan">
+                <button type="submit" id="submit" class="button-rect">确认</button>
             </div>
 
         
@@ -110,7 +110,10 @@
                 <label for="sub">附件:</label>
                 <input type="file" name="uploadfile" value="上传附件"/>
                 <input type="hidden" name="token" value="{{.}}"/>
-                <input type="submit" value="上传" id="sub"/>
+            </div>
+
+            <div class="chan">
+                <input type="submit" value="上传" id="sub" class="button-rect"/>
             </div>
 
         </form>

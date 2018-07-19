@@ -233,13 +233,23 @@ function showquestion(i){
 
 	}     
 
-    
-
+    // 如果有附件则显示附件
+	if(questions[i].URL != null) {
+		
+		var z1=`
+		<audio controls="controls" style="width:80%">
+		  Your browser does not support the <code>audio</code> element.
+		  <source src=${questions[i].URL} type="audio/wav">
+		</audio>`
+		document.getElementById('options'+i).innerHTML+=z1
+	}
 }
 
 
 
-
+//  <audio src=${questions[i].URL} autoplay>
+// Your browser does not support the <code>audio</code> element.
+// </audio>
 
 
 

@@ -5,8 +5,8 @@
 
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=no" />
-  <link rel="stylesheet" type="text/css" href="../static/css/style.css" charset="utf-8">
-  <link rel="stylesheet" type="text/css" href="../static/css/makepaper.css" charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="../../static/css/style.css" charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="../../static/css/newpaper.css" charset="utf-8">
 
 
 </head>
@@ -19,8 +19,8 @@
       <a href="querypapers.html">我的试卷</a>
       <a href="querydatas.html">学生成绩管理</a>
       <a href="dotest.html">已完成测试</a>
-      <a href="insertque.html">新建题目</a>
-      <a href="makepaper.html">新建试卷</a>
+      <a href="newque.html">新建题目</a>
+      <a href="newpaper.html">新建试卷</a>
       <a href="queryusers.html">学生信息管理</a>
       <a href="about.html">帮助中心</a>  
           
@@ -40,9 +40,11 @@
       <div id="diva" ondrop="drop(event)" ondragover="allowDrop(event)">
         请从上面方框中添加题目到该试卷
       </div>
-      <!-- 设置按钮 -->
-      <button id= "button3" style="grid-column:4/6;grid-row:23;margin-top: 1px"> 预览试卷 </button>
-      <button id= "button4" style="grid-column: 7/9;grid-row:23;margin-top:1px"> 确认提交 </button>
+      <!-- 按钮组 -->
+      <ul class="button-group" style="grid-column:4/9;grid-row:23;margin-top: 1px">
+        <li><button id= "button3" > 预览试卷 </button></li>
+        <li><button id= "button4" > 确认提交 </button></li>
+      </ul>
   </div>
 
 
@@ -87,8 +89,8 @@
 
 
 <script src="http://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
-<script src="../static/js/main.js"></script>
-<script src="../static/js/makepaper.js"></script>
+<script src="../../static/js/main.js"></script>
+<script src="../../static/js/newpaper.js"></script>
 
 
 

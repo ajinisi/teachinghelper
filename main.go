@@ -133,7 +133,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 		} else {
 
-			sess.Set("username", username)
+			sess.Set("username", username[0])
 
 			w.WriteHeader(200)
 			t, err := template.ParseFiles("index.html")
@@ -177,9 +177,10 @@ func register(w http.ResponseWriter, r *http.Request) {
 		//io.WriteString(w, "注册失败") // 返回结果
 	} else {
 		w.WriteHeader(200)
+		fmt.Printf("1")
 		//arr := http.StatueText(200)
 		//io.WriteString(w, arr) // 返回结果
-		t, err := template.ParseFiles("view/login.html")
+		t, err := template.ParseFiles("template/user/login.html")
 		if err != nil {
 			log.Println(err)
 		}

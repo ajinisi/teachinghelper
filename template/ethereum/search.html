@@ -2,6 +2,7 @@
 
     <meta charset="utf-8">
     <title>上链</title>
+    <link rel="stylesheet" type="text/css" href="../../static/css/style.css" charset="utf-8">
     <script src="../../static/js/main.js"></script>
     <script src="search.js"></script>
 
@@ -10,8 +11,10 @@
 
 
 <body>
-
-    <form action="http://localhost:8081/query" method="get">
+<header>
+</header>
+<main>
+    <form action="http://localhost:8081/query" method="get" style="grid-row: 2/5;grid-column:5/9">
 
 
 
@@ -33,11 +36,11 @@
     
 
 
-    <button onclick="build()">新建区块</button>
+    <button onclick="build()" style="grid-row: 6/7;grid-column:5/9">新建区块</button>
 
 
 
-    <form action="http://localhost:8081/build" method="POST" enctype="application/json">
+    <form action="http://localhost:8081/build" method="POST" enctype="application/json" style="grid-row: 8/9;grid-column:5/9">
 
 
         <div>
@@ -62,5 +65,5 @@
 
     </form>
 
-
+</main>
 </body>

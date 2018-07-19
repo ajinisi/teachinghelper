@@ -41,12 +41,13 @@ function statechanged2(){
       var json_str = xmlHttpRequest.responseText; // json形式的字符串
       var papers = eval('(' + json_str + ')'); // 转化为json格式
       // var user = JSON.parse(json_str); // 转化为json格式的另一种方式，较安全
-        alert(papers)
-      var TableDate="<th>班级名</th><th>试卷名</th>"
+
+      var TableDate="<th>班级名</th><th>试卷名</th><th>操作</th>"
       for  (var i=0;i<papers.length;i++){
         TableDate+="<tr>"
         TableDate+=`<td>`+papers[i].classname+`</td>`
-        TableDate+=`<td>`+`<button value=${papers[i].id}>`+papers[i].papername+"</button>"+`</td>`
+        TableDate+=`<td>`+papers[i].papername+`</td>`
+        TableDate+=`<td>`+`<button value=${papers[i].id}>`+"查看"+"</button>"+`</td>`
         TableDate+="</tr>"
       } 
 
@@ -59,7 +60,7 @@ function statechanged2(){
     else if(req.status == 401 || req.status == 403)
     {
 
-      window.location = "http://localhost:8080/view/login.html";
+      window.location = "http://localhost:8080/template/user/login.html";
       alert("request url is forbidden or not authorized to visit.");
       
     }
@@ -96,7 +97,7 @@ querypapers()
 
 window.setTimeout(function(){
   binds();
-  },10);
+  },50);
 
 var questions
 
@@ -113,7 +114,7 @@ function binds(){
       for  (var i=0;i<questions.length;i++){
       showquestion(i)	
       } 
-  	},10);
+  	},50);
 	}                    
 
 	for(var j=0;j<btns.length;j++){

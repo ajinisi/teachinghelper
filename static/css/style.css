@@ -58,6 +58,9 @@ header> a:active {
 	color: white;
 }
 
+
+
+/* 表格 */
 table, td, th{
 	border: 1px solid black;
 }
@@ -67,86 +70,164 @@ td{
 	vertical-align:middle;
 }
 
-button{
-	margin-left:5px;
+
+/* 跑道按钮 */
+button {
+    /* 这个外边距的大小与label和文本输入框之间的间距差不多 */
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 100%;
+	border-radius: 2em;
+	width: 90%;
 }
+button:hover {
+    background-color: #3e8e41;
+}
+button:focus {
+	color: white;
+}
+
 
 @media  screen and (max-width:1000px){
-body{
-	width:330px;
-	height:550px;
-		margin:0px auto;
+	body{
+		width:330px;
+		height:550px;
+			margin:0px auto;
+			display: grid;
+			grid-gap: 10px 5px;
+			grid-template-columns: repeat(12, 1fr);
+			grid-template-rows:repeat(24, 1fr);
+	}
+	header{
+		margin-right: 0.5%;
+		font-family:cursive;
+		background-color: #A0A0A0;
+		text-align: center;
 		display: grid;
-		grid-gap: 10px 5px;
-		grid-template-columns: repeat(12, 1fr);
-		grid-template-rows:repeat(24, 1fr);
-}
-header{
-	margin-right: 0.5%;
+		grid-column: 1/13;
+			grid-row: 1;
+	}
+	header>a{
+		margin-top:30%;
+			outline: none;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 14px;
+			line-height: 1;
+			color:white;
+	}
+	.right{
+		grid-column:8/13;
+		grid-row: 1/25;
+		display: grid
+	}
+	.right>a{
 	font-family:cursive;
-	background-color: #A0A0A0;
+	font-size:12px;
+	outline: none;
+	text-decoration: none;
+	margin-right: 0.625%;
 	text-align: center;
-	display: grid;
-	grid-column: 1/13;
-		grid-row: 1;
-}
-header>a{
-	margin-top:30%;
-		outline: none;
-		text-decoration: none;
-		display: inline-block;
-		font-size: 14px;
-		line-height: 1;
-		color:white;
-}
-.right{
-	grid-column:8/13;
-	grid-row: 1/25;
-	display: grid
-}
-.right>a{
-font-family:cursive;
-font-size:12px;
-outline: none;
-text-decoration: none;
-margin-right: 0.625%;
-text-align: center;
-line-height: 1;
-color:black;
-}
-#questions{
-	font-size: 10px;
-	font-family: cursive;
-	text-align: center;
-	margin:0 1% 7.5% 1%;
-	grid-column: 1/13;
-	display: grid;
-	grid-row: 4/15;
-	padding:1%;
-	border:1px solid #aaaaaa;
-}
-.left{
-	grid-column:1/13;
-	grid-row: 14/24;
-	display: grid
-}
-#diva{
-	font-size: 10px;
-	font-family: cursive;
-	text-align: center;
-	grid-column: 1/13;
-	margin-right: 1%;
-	display:grid;
-	grid-row:1/24;
-	padding:1%;
-	border:1px solid #aaaaaa;
-}
-.left>button{
-	width: 100px;
-	height: 20px;
-	grid-row:24;
-	margin-left:26%;
-	font-size: 1px;
+	line-height: 1;
+	color:black;
+	}
+	#questions{
+		font-size: 10px;
+		font-family: cursive;
+		text-align: center;
+		margin:0 1% 7.5% 1%;
+		grid-column: 1/13;
+		display: grid;
+		grid-row: 4/15;
+		padding:1%;
+		border:1px solid #aaaaaa;
+	}
+	.left{
+		grid-column:1/13;
+		grid-row: 14/24;
+		display: grid
+	}
+	#diva{
+		font-size: 10px;
+		font-family: cursive;
+		text-align: center;
+		grid-column: 1/13;
+		margin-right: 1%;
+		display:grid;
+		grid-row:1/24;
+		padding:1%;
+		border:1px solid #aaaaaa;
+	}
+	.left>button{
+		width: 100px;
+		height: 20px;
+		grid-row:24;
+		margin-left:26%;
+		font-size: 1px;
+	}
 }
 
-}
+/* 表单 */
+
+form {
+    /* 居中表单 */
+    margin: 0 auto;
+    
+    width: 400px;
+    /* 显示表单的轮廓 */
+    padding: 1em;
+    border: 1px solid #CCC;
+    border-radius: 1em;
+  }
+  
+  form div + div {
+    margin-top: 1em;
+  }
+  
+  label {
+    /* 确保所有label大小相同并正确对齐 */
+    display: inline-block;
+    width: 90px;
+    text-align: right;
+  }
+  
+  input, textarea {
+    /* 确保所有文本输入框字体相同
+       textarea默认是等宽字体 */
+    font: 1em sans-serif;
+  
+    /* 使所有文本输入框大小相同 */
+    width: 300px;
+    box-sizing: border-box;
+  
+    /* 调整文本输入框的边框样式 */
+    border: 1px solid #999;
+  }
+  
+  input:focus, textarea:focus {
+    /* 给激活的元素一点高亮效果 */
+    border-color: #000;
+  }
+  
+  textarea {
+    /* 使多行文本输入框和它们的label正确对齐 */
+    vertical-align: top;
+  
+    /* 给文本留下足够的空间 */
+    height: 5em;
+  }
+  
+  .button {
+    /* 把按钮放到和文本输入框一样的位置 */
+    padding-left: 90px; /* 和label的大小一样 */
+  }
+ 
+
+  p{
+    text-align: center;
+  }

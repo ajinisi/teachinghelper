@@ -1,12 +1,17 @@
 package main
 
 import (
+	"crypto/md5"
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"html/template"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -96,7 +101,7 @@ func insertque(w http.ResponseWriter, r *http.Request) {
 	stars1, _ := strconv.Atoi(stars)
 
 	content := r.Form["content"][0]
-
+	url := r.Form["URL"][0]
 	options := r.Form["options"]
 	answers := r.Form["answers"]
 
@@ -125,6 +130,7 @@ func insertque(w http.ResponseWriter, r *http.Request) {
 		Answers []string `json:"answers"`
 		Grade   int      `json:"grade"`
 		Stars   int      `json:"stars"`
+		URL     string   `json:"URL"`
 	}
 
 	var que = &Question1{
@@ -135,6 +141,7 @@ func insertque(w http.ResponseWriter, r *http.Request) {
 		answers,
 		grade1,
 		stars1,
+		url,
 	}
 
 	// 转换为json字符串，存储在数据库中
@@ -213,4 +220,44 @@ func querygrade(w http.ResponseWriter, r *http.Request) {
 	id1, err := res1.LastInsertId()
 	fmt.Println(id1)
 
+}
+
+// 上传附件，如头像，图片，音频
+func upload(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+
+	fmt.Println("method:", r.Method) //获取请求的方法
+	if r.Method == "GET" {
+		crutime := time.Now().Unix()
+		h := md5.New()
+		io.WriteString(h, strconv.FormatInt(crutime, 10))
+		token := fmt.Sprintf("%x", h.Sum(nil))
+
+		t, _ := template.ParseFiles("upload.gtpl")
+		t.Execute(w, token)
+	} else {
+		// 设置最大内存
+		r.ParseMultipartForm(32 << 20)
+		// 获取上面文件的句柄
+
+		file, handler, err := r.FormFile("uploadfile")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		defer file.Close()
+
+		// fmt.Fprintf(w, "%v", handler.Header)
+
+		f, err := os.OpenFile("static/resources/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		defer f.Close()
+		io.Copy(f, file)
+
+		// 返回附件的路径URL
+		fmt.Fprintf(w, "../../static/resources/"+handler.Filename)
+	}
 }

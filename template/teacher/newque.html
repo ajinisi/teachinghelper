@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <title>新建题目</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="../../static/css/style.css" charset="utf-8">
+    
+    <script src="../../static/js/jquery-3.2.1.min.js"></script>
+    <script src="../../static/js/jquery.form.min.js .js"></script>
+    <script src="../../static/js/newque.js"></script>
+</head>
+
+
+<body>
+        <header>
+                <img style="grid-column: 1/2;height: 40px;" src="../view/images/logo.png" ></img>
+
+                <a href="querypapers.html">我的试卷</a>
+                <a href="querydatas.html">学生成绩管理</a>
+                <a href="dotest.html">已完成测试</a>
+                <a href="insertque.html">新建题目</a>
+                <a href="makepaper.html">新建试卷</a>
+                <a href="queryusers.html">学生信息管理</a>
+                <a href="about.html">帮助中心</a>  
+                    
+                <img style="grid-column: 13;height: 40px;" src="images/11019.jpg"></img>
+        </header>
+
+
+        <main>
+
+        <form style="grid-column: 4/10;grid-row: 2/10;height: 500px;" action="http://localhost:8080/insertque" method="GET" id="form2">
+        
+            <p>请在下列栏目中选择题目的类型</p>
+    
+                <select name="type"  >
+                    <option selected style="display: none;">题目类型</option>
+                    <option value="single" >选择题</option>
+                    <option value="judge" >判断题</option>
+                    <option value="fill">填空题</option>
+                </select> 
+
+
+                <select name="grade" >
+                    <option selected style="display: none;">分数</option>
+                    <option value=1 >1分</option>
+                    <option value=2 >2分</option>
+                    <option value=3>3分</option>
+                    <option value=4 >4分</option>
+                    <option value=5 >5分</option>
+                </select>
+
+                <select name="stars" >
+                    <option selected style="display: none;">难易度</option>
+                    <option value=1 >1☆</option>
+                    <option value=2 >2☆</option>
+                    <option value=3>3☆</option>
+                    <option value=4 >4☆</option>
+                    <option value=5 >5☆</option>
+                </select>
+
+
+        <p>请在下面选项框中输入该题目的详细信息</p>
+        
+                
+                <div>
+                    <label for="queNo">题号:</label> 
+                    <input type="text" id="queNo" name="id">
+                </div>
+
+                <div>
+                    <label for="content">题干:</label>
+                    <textarea name="content" id="content"></textarea>
+                </div>
+
+                <div>
+                    <label for="answer">答案:</label>
+                    <textarea name="answers" id="answer"></textarea>
+                </div>
+
+                <div>
+                    <label for="t1">路径:</label>
+                    <input type="text" id='t1' name="URL">  
+                </div> 
+
+                <div>
+                        <div >
+                            <a href="#" id="lable" onclick="add()" style="text-decoration : none">添加选项+</a>
+                        </div>
+                        <div id="second_42" style="overflow:auto;overflow-x: hidden;border: 1px solid">
+                        </div>
+                </div> 
+            
+
+                
+
+                <!-- <input type="text" name="URL" id='u1'> -->
+
+            <div class="button">
+                <button type="submit" id="submit">确认</button>
+            </div>
+
+        
+        </form>
+
+        <!-- enctype="multipart/form-data" action="http://localhost:8080/upload" method="post" -->
+        <form style="grid-column: 4/10;grid-row: 19/25; height: 100px;" enctype="multipart/form-data"  method="post" id="form1">
+            
+            <div>
+                <label for="sub">附件:</label>
+                <input type="file" name="uploadfile" value="上传附件"/>
+                <input type="hidden" name="token" value="{{.}}"/>
+                <input type="submit" value="上传" id="sub"/>
+            </div>
+
+        </form>
+
+
+
+
+
+        </main>
+</body>
+</html>
+
+
+
+
+
+
+
+

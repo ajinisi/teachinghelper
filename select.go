@@ -1,18 +1,12 @@
 package main
 
 import (
-	"crypto/md5"
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"html/template"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"strconv"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -198,39 +192,6 @@ func queryquesbank(w http.ResponseWriter, r *http.Request) {
 	//}
 }
 
-func upload(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
-
-	fmt.Println("method:", r.Method) //获取请求的方法
-	if r.Method == "GET" {
-		crutime := time.Now().Unix()
-		h := md5.New()
-		io.WriteString(h, strconv.FormatInt(crutime, 10))
-		token := fmt.Sprintf("%x", h.Sum(nil))
-
-		t, _ := template.ParseFiles("upload.gtpl")
-		t.Execute(w, token)
-	} else {
-		// 设置最大内存
-		r.ParseMultipartForm(32 << 20)
-		// 获取上面文件的句柄
-		file, handler, err := r.FormFile("uploadfile")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		defer file.Close()
-		fmt.Fprintf(w, "%v", handler.Header)
-		f, err := os.OpenFile("view/papers/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		defer f.Close()
-		io.Copy(f, file)
-	}
-}
-
 // 查询试卷内容
 func querypaper(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
@@ -244,7 +205,7 @@ func querypaper(w http.ResponseWriter, r *http.Request) {
 
 	body, _ := ioutil.ReadAll(r.Body)
 	var num = string(body)
-
+	fmt.Println(num)
 	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
 	if err != nil {
 		//fmt.Println(err)
@@ -310,7 +271,7 @@ func querypapers(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		// body, _ := ioutil.ReadAll(r.Body)
-		var username = sess.Get("username") // string(body)
+		username := sess.Get("username") // string(body)
 
 		db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
 		if err != nil {

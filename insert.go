@@ -93,7 +93,10 @@ func insertque(w http.ResponseWriter, r *http.Request) {
 
 	// 接收到的数据处理
 	id := r.Form["id"][0]
-	id1, _ := strconv.Atoi(id)
+	id1, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println(err)
+	}
 	type1 := r.Form["type"][0]
 	grade := r.Form["grade"][0]
 	grade1, _ := strconv.Atoi(grade)

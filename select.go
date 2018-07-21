@@ -280,27 +280,26 @@ func querypapers(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Query 查询
-		rows, err := db.Query("SELECT CLASSNAME,PAPERNAME,ID FROM login.paperbank where username=?", username)
+		rows, err := db.Query("SELECT PAPERNAME,ID FROM login.paperbank where AUTHOR=?", username)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		defer db.Close()
 
-		var temp1, temp2 string
+		var temp2 string
 		var tem int
 		type paper struct {
-			ClassName string `json:"classname"`
+			//ClassName string `json:"classname"`
 			PaperName string `json:"papername"`
 			ID        int    `json:"id"`
 		}
 		var papers []paper
 		for rows.Next() {
-			if err := rows.Scan(&temp1, &temp2, &tem); err != nil {
+			if err := rows.Scan(&temp2, &tem); err != nil {
 				log.Fatal(err)
 			}
 			var pap = paper{
-				temp1,
 				temp2,
 				tem,
 			}
@@ -336,4 +335,123 @@ func insertpaper(w http.ResponseWriter, r *http.Request) {
 	// 返回“插入成功”
 	w.WriteHeader(200)
 
+}
+
+// 查询任务库
+func querytasks(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+	//ret, _ := json.Marshal("wang")
+
+	// 验证是否登陆
+	sess := globalSessions.SessionStart(w, r)
+	if sess.Get("username") == nil {
+		w.WriteHeader(403)
+
+	} else {
+
+		// body, _ := ioutil.ReadAll(r.Body)
+		username := sess.Get("username") // string(body)
+
+		db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
+		if err != nil {
+			//fmt.Println(err)
+			fmt.Printf("连接数据库失败")
+		}
+
+		// Query 查询
+		rows, err := db.Query("SELECT CLASSNAME,TYPE,DEADLINE,PAPERNo FROM login.taskbank where T_No=?", username)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		defer db.Close()
+
+		var temp1, temp2, temp3 string
+		var tem int
+		type task struct {
+			ClassName string `json:"classname"`
+			Type      string `json:"type"`
+			Deadline  string `json:"deadline"`
+			PaperNo   int    `json:"paperNo"`
+		}
+		var tasks []task
+		for rows.Next() {
+			if err := rows.Scan(&temp1, &temp2, &temp3, &tem); err != nil {
+				log.Fatal(err)
+			}
+			var pap = task{
+				temp1,
+				temp2,
+				temp3,
+				tem,
+			}
+			tasks = append(tasks, pap)
+		}
+
+		ret, json_err := json.Marshal(&tasks) // json化结果集
+		if json_err != nil {
+			log.Println(json_err)
+		}
+		fmt.Fprint(w, string(ret)) // json转化为字符串发送
+	}
+}
+
+// 查询成绩单
+func querytask(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+	//ret, _ := json.Marshal("wang")
+
+	// 验证是否登陆
+	sess := globalSessions.SessionStart(w, r)
+	if sess.Get("username") == nil {
+		w.WriteHeader(403)
+
+	} else {
+
+		// username := sess.Get("username") // string(body)
+
+		body, _ := ioutil.ReadAll(r.Body)
+		var taskID = string(body)
+		fmt.Println(taskID)
+
+		db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
+		if err != nil {
+			//fmt.Println(err)
+			fmt.Printf("连接数据库失败")
+		}
+
+		// Query 查询
+		rows, err := db.Query("SELECT USERNAME,COMPLETIONDATE FROM login.reportbank where TASKID=?", taskID)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		defer db.Close()
+
+		var temp1, temp2 string
+
+		type report struct {
+			Username       string `json:"username"`
+			CompletionDate string `json:"completiondate"`
+		}
+		var reports []report
+		for rows.Next() {
+			if err := rows.Scan(&temp1, &temp2); err != nil {
+				log.Fatal(err)
+			}
+			var pap = report{
+				temp1,
+				temp2,
+			}
+			reports = append(reports, pap)
+		}
+
+		ret, json_err := json.Marshal(&reports) // json化结果集
+		if json_err != nil {
+			log.Println(json_err)
+		}
+		fmt.Fprint(w, string(ret)) // json转化为字符串发送
+	}
 }

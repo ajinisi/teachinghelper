@@ -42,12 +42,14 @@ function statechanged2(){
       var papers = eval('(' + json_str + ')'); // 转化为json格式
       // var user = JSON.parse(json_str); // 转化为json格式的另一种方式，较安全
 
-      var TableDate="<th>班级名</th><th>试卷名</th><th>操作</th>"
+      var TableDate="<th>试卷作者</th><th>试卷名</th><th>操作</th>"
       for  (var i=0;i<papers.length;i++){
         TableDate+="<tr>"
         TableDate+=`<td>`+papers[i].classname+`</td>`
         TableDate+=`<td>`+papers[i].papername+`</td>`
-        TableDate+=`<td>`+`<button value=${papers[i].id}>`+"查看"+"</button>"+`</td>`
+        TableDate+=`<td>`+`<button value=${papers[i].id}>`+"查看"+"</button>"
+        TableDate+=       `<button value=${papers[i].id}>`+"修改"+"</button>"
+        TableDate+=       `<button value=${papers[i].id}>`+"删除"+"</button>"+`</td>`
         TableDate+="</tr>"
       } 
 
@@ -104,11 +106,11 @@ var questions
 function binds(){
 	var btns = document.querySelectorAll(`button`);
   
-  
-  function bgChange(i){                        
+  // 查看试卷函数
+  function view(i){                        
 
   	querypaper(btns[i].value);
-    alert(btns[i].value)
+
   	window.setTimeout(function(){
       document.getElementById('questions').innerHTML=""
       for  (var i=0;i<questions.length;i++){
@@ -117,13 +119,14 @@ function binds(){
   	},50);
 	}                    
 
-	for(var j=0;j<btns.length;j++){
+	for(var j=0;j<btns.length;j=j+3){
 		a1(j)
-	}
-
+  }
+  
+  // 给每个按钮绑定查看试卷函数
 	function a1(j){
 		btns[j].addEventListener('click', function(){
-			bgChange(j)
+			view(j)
 		})
 	}
 }

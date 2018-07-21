@@ -1,53 +1,41 @@
 
- 
-<title> 查询所有用户 </title>
 
-<link rel="stylesheet" type="text/css" href="css/style.css" charset="utf-8">
+<head>
+
+  <meta charset="utf-8">
+  <title> 我的班级 </title>
+  <link rel="stylesheet" type="text/css" href="../../static/css/style.css" charset="utf-8">
+
+</head>
+
 
 <body>
-  <div class="container" >
-      
-    
 
 
     <!-- 中部 -->
-    <div class="content">
+    <main>
 
-      <!-- 页面左侧导航栏侧边栏 -->
-      <aside class = "sidebar" >
-        <nav>
-            <ul>
-                <li>管理员登陆</li>
-                <li><a href="queryusers.html">学生信息查看</a></li>
-                <li>系统日志</li>
-                <li> <a href="about.html">关于</a>  </li>
-                <li><a href="querydatas.html">答题信息查询</a></li>
-            </ul>
 
-        </nav>
-
-      </aside>
+      <div class="bar-split"> 我的班级 </div>
 
       <!-- 中间展示区中间显示信息 -->
-      <div class="maincontent">
-        <table >
-          <caption>学生信息查询</caption>
-          <tbody id="table"></tbody>
-        </table>
-      </div>
 
-    </div>
+      <table >
+        <caption>我的班级</caption>
+        <tbody id="table"></tbody>
+      </table>
 
 
-  </div>
+    </main>
+
+
+
 
 </body>
 
 
 
 <!--  
-
-
 
 
 
@@ -218,7 +206,7 @@ function statechanged(){
       var users = eval('(' + json_str + ')'); // 转化为json格式
       // var user = JSON.parse(json_str); // 转化为json格式的另一种方式，较安全
 
-      var TableData="<th>学号</th><th>密码</th>"
+      var TableData="<th>班级</th><th>学生</th>"
       for  (var i=0;i<users.length;i++){
         TableData+="<tr>"
         TableData+="<td>"+users[i].username+"</td>"

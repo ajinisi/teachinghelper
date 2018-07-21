@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-  <title>我的试卷</title>
+  <title>我的任务</title>
 
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=no" />
@@ -15,13 +15,15 @@
 <!-- 头部 -->
 <header>
     <a href="../../index.html"> <img style="grid-column: 1/2;height: 40px;" src="../static/images/logo.png" ></img> </a>
-    <a href="querypapers.html">我的试卷</a>
+    <a href="mypapers.html">我的试卷</a>
+    <a href="mytask.html">我的任务</a>
     <a href="querydatas.html">学生成绩管理</a>
-    <a href="dothetest.html">已完成测试</a>
+
     <a href="newque.html">新建题目</a>
     <a href="newpaper.html">新建试卷</a>
+    <a href="newtask.html">新建任务</a>
     <a href="queryusers.html">学生信息管理</a>
-    <a href="about.html">帮助中心</a>  
+  
         
     <img style="grid-column: 12/13;height: 40px;" src="images/11019.jpg"></img>
 </header>
@@ -33,14 +35,12 @@
     <!-- 分隔栏 -->
     <div style="grid-row: 1;grid-column:1/13; background-color: aquamarine"> </div>
 
-
-
-    <table style="grid-column: 2/4;grid-row: 3/23">
-        <caption>试卷信息查询</caption>
+    <table style="grid-column: 2/12;grid-row: 3/23">
+        <caption><p>任务信息查询</p></caption>
         <tbody id="table1"></tbody>
     </table>
 
-    <div id = "questions" style="grid-column: 6/13;grid-row:3/25"></div>
+    
 
 </main>
 
@@ -48,4 +48,4 @@
 
 
 <script src="../../static/js/main.js"></script>
-<script src="../../static/js/querypapers.js"></script>
+<script src="../../static/js/mytask.js"></script>

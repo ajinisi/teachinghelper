@@ -41,6 +41,8 @@ func main() {
 	http.HandleFunc("/queryquesbank", queryquesbank)
 	http.HandleFunc("/querypaper", querypaper)
 	http.HandleFunc("/querypapers", querypapers)
+	http.HandleFunc("/querytasks", querytasks)
+	http.HandleFunc("/querytask", querytask)
 	http.HandleFunc("/insertpaper", insertpaper)
 	http.HandleFunc("/upload", upload)
 	http.HandleFunc("/insertque", insertque)
@@ -124,7 +126,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		post_data = filter_data.formatData()
 
 		var row *sql.Row
-		row = db.QueryRow("select * from login.users where username = ? and password = ?", post_data.user_name, post_data.pass_word)
+		row = db.QueryRow("select USER_ID,PASSWORD from login.user where USER_ID = ? and password = ?", post_data.user_name, post_data.pass_word)
 		var userName, passWord string
 		err = row.Scan(&userName, &passWord) // 遍历结果
 
@@ -169,7 +171,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 	var filter_data FilterData = post_data
 	post_data = filter_data.formatData()
 
-	_, err = db.Exec("insert into login.users (username, password) values(?,?)", post_data.user_name, post_data.pass_word) //插入数据
+	_, err = db.Exec("insert into login.user (USER_ID, password) values(?,?)", post_data.user_name, post_data.pass_word) //插入数据
 	if err != nil {
 		w.WriteHeader(406)
 		fmt.Println(err)

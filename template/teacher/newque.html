@@ -29,20 +29,22 @@
 
         <main>
 
+
         <form style="grid-column: 4/10;grid-row: 2/10;height: 500px;" action="http://localhost:8080/insertque" method="GET" id="form2">
         
-            <p>请在下列栏目中选择题目的类型</p>
-    
-                <select name="type"  >
-                    <option selected style="display: none;">题目类型</option>
+            
+            <div>
+                <label>选择:</label>
+                <select name="type" class="select">
+                    <option selected style="display: none;">-- 类型 --</option>
                     <option value="single" >选择题</option>
                     <option value="judge" >判断题</option>
                     <option value="fill">填空题</option>
                 </select> 
 
 
-                <select name="grade" >
-                    <option selected style="display: none;">分数</option>
+                <select name="grade" class="select">
+                    <option selected style="display: none;">-- 分数 --</option>
                     <option value=1 >1分</option>
                     <option value=2 >2分</option>
                     <option value=3>3分</option>
@@ -50,23 +52,23 @@
                     <option value=5 >5分</option>
                 </select>
 
-                <select name="stars" >
-                    <option selected style="display: none;">难易度</option>
+                <select name="stars" class="select">
+                    <option selected style="display: none;">-- 难易度 --</option>
                     <option value=1 >1☆</option>
                     <option value=2 >2☆</option>
                     <option value=3>3☆</option>
                     <option value=4 >4☆</option>
                     <option value=5 >5☆</option>
                 </select>
+                
+            </div>
 
-
-        <p>请在下面选项框中输入该题目的详细信息</p>
         
                 
-                <div>
+                <!-- <div>
                     <label for="queNo">题号:</label> 
                     <input type="text" id="queNo" name="id">
-                </div>
+                </div> -->
 
                 <div>
                     <label for="content">题干:</label>
@@ -83,13 +85,14 @@
                     <input type="text" id='t1' name="URL">  
                 </div> 
 
-                <div>
+        
                     <div>
-                        <a href="#" id="lable" onclick="add()" style="text-decoration : none">添加选项+</a>
+                        <label for="add-option">
+                            <a href="#" id="add-option" onclick="add()" style="text-decoration : none">添加选项+</a>
+                        </label>
                     </div>
-                    <div id="second_42" style="overflow:auto;overflow-x: hidden;border: 1px solid">
-                    </div>
-                </div> 
+                    <div id="added-option"></div>
+      
             
 
                 

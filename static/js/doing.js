@@ -51,9 +51,35 @@ function querypaper(n){
   }
 
 var questions
-// 获得第二套试卷
-querypaper(1)
 
+
+
+
+var url = location.search;
+var theRequest = new Object();
+
+if ( url.indexOf( "?" ) != -1 ) {
+
+  var str = url.substr( 1 ); //substr()方法返回从参数值开始到结束的字符串；
+
+  var strs = str.split( "&" );
+
+  for ( var i = 0; i < strs.length; i++ ) {
+
+    theRequest[ strs[ i ].split( "=" )[ 0 ] ] = ( strs[ i ].split( "=" )[ 1 ] );
+
+  }
+
+  console.log(theRequest); //此时的theRequest就是我们需要的参数；
+
+}
+
+
+
+window.setTimeout(function(){
+	// 获得试卷
+	querypaper(theRequest.som)
+},20)   
 
 // 选项卡
 var div = document.createElement("div");
@@ -75,15 +101,15 @@ window.setTimeout(function(){
 	}
 
 	// 默认显示第一道题
-	showquestion(0);
+	showquestion(1);
 
-},20)
+},50)
 
 
 window.setTimeout(function(){
 	bind()
 	saveanswers()
-},30)   
+},80)   
 
 function bind(){
     var btns = document.querySelectorAll(`.button-circ`);
@@ -110,11 +136,11 @@ function showquestion(i){
     
     document.getElementById('questions').innerHTML+=
 			`<div class='div' ondrop='drop(event)' ondragover='allowDrop(event)'> 
-					<div draggable='true' ondragstart='drag(event)' id='question${i+1}'></div>
+					<div draggable='true' ondragstart='drag(event)' id='question${i}'></div>
 			</div>`
 	
 	// 显示第i题
-	document.getElementById('question'+(i+1)).innerHTML="<div id ="+"stem"+i+" > </div>"+"<div id = "+"options"+i+"> </div>"
+	document.getElementById('question'+i).innerHTML="<div id ="+"stem"+i+" > </div>"+"<div id = "+"options"+i+"> </div>"
 
 
 	// 显示第i题 题干
@@ -187,7 +213,16 @@ function showquestion(i){
 
 	}     
 
-    
+          // 如果有附件则显示附件
+		  if(questions[i].URL != null) {
+      
+			var z1=`
+			<audio controls="controls" style="width:80%">
+			  Your browser does not support the <code>audio</code> element.
+			  <source src=${questions[i].URL} type="audio/wav">
+			</audio>`
+			document.getElementById('options'+i).innerHTML+=z1
+		  }
 
 }
 

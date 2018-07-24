@@ -43,9 +43,14 @@ func main() {
 	http.HandleFunc("/querypapers", querypapers)
 	http.HandleFunc("/querytasks", querytasks)
 	http.HandleFunc("/querytask", querytask)
+	http.HandleFunc("/queryclass", queryclass)
+	http.HandleFunc("/querytodo", querytodo)
 	http.HandleFunc("/insertpaper", insertpaper)
+	http.HandleFunc("/inserttask", inserttask)
 	http.HandleFunc("/upload", upload)
 	http.HandleFunc("/insertque", insertque)
+
+	http.HandleFunc("/quer", quer)
 
 	//mux.HandleFunc("/index", index)
 

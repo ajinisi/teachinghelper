@@ -2,7 +2,7 @@
 var i=0;
 function add(){
     var op="op"+i;
-    document.getElementById("second_42").innerHTML+="<input type='text' id="+op+" style='margin-right:350px' name='options'> "+"<br>";
+    document.getElementById("added-option").innerHTML+="<input type='text' id="+op+" style='margin-right:350px' name='options'> "+"<br>";
     console.log(document.getElementById("op"+i));
     i++;
 }
@@ -37,7 +37,7 @@ var options = {
     success: showResponse,      //提交后的回调函数
     url: 'http://localhost:8080/upload', //默认是form的action， 如果申明，则会覆盖
     type: 'post',               //默认是form的method（get or post），如果申明，则会覆盖
-datatype: 'JSON',           //html(默认), xml, script, json...接受服务端返回的类型
+    datatype: 'JSON',           //html(默认), xml, script, json...接受服务端返回的类型
     //clearForm: true,          //成功提交后，清除所有表单元素的值
     //resetForm: true,          //成功提交后，重置所有表单元素的值
     timeout: 3000               //限制请求的时间，当请求大于3秒后，跳出请求

@@ -202,7 +202,7 @@ form {
     /* 居中表单 */
     margin: 0 auto;
     
-    width: 400px;
+    width: 450px;
     /* 显示表单的轮廓 */
     padding: 1em;
     border: 1px solid #CCC;
@@ -213,14 +213,14 @@ form {
     margin-top: 1em;
   }
   
-  label {
+  form label {
     /* 确保所有label大小相同并正确对齐 */
     display: inline-block;
     width: 90px;
     text-align: right;
   }
   
-   input, textarea {
+   form input, textarea, select {
     /* 确保所有文本输入框字体相同
        textarea默认是等宽字体 */
     font: 1em sans-serif;
@@ -233,6 +233,17 @@ form {
     border: 1px solid #999;
   }
   
+#added-option{
+	
+	width: 300px;
+	padding-left: 90px;
+	overflow:auto;
+	overflow-x: hidden;
+
+}
+
+
+
    input:focus, textarea:focus {
     /* 给激活的元素一点高亮效果 */
     border-color: #000;
@@ -271,3 +282,38 @@ form {
 	padding-left: 20px;
   }
 
+
+
+/* 下拉菜单 */
+
+.select{  
+    background:#fafdfe;  
+    height:28px;  
+    width:auto;  
+    line-height:28px;  
+    border:1px solid #9bc0dd;  
+    -moz-border-radius:2px;  
+    -webkit-border-radius:2px;  
+    border-radius:2px;  
+}  
+
+
+
+
+
+.index-png{
+	grid-row: 3/25;
+	grid-column:1/13; 
+	background-image: url(../images/blackboard.png);
+	text-align: center;
+	background-repeat: no-repeat;
+  
+	background-size: 100% 100%;
+}
+
+.slogan{
+	grid-row: 9/13;
+	grid-column:1/12; 
+	font-size: 50px;
+	color:white;
+}

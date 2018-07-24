@@ -92,11 +92,12 @@ func insertque(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Path: ", r.URL.Path)
 
 	// 接收到的数据处理
-	id := r.Form["id"][0]
-	id1, err := strconv.Atoi(id)
-	if err != nil {
-		fmt.Println(err)
-	}
+	// id := r.Form["id"][0]
+	// id1, err := strconv.Atoi(id)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+
 	type1 := r.Form["type"][0]
 	grade := r.Form["grade"][0]
 	grade1, _ := strconv.Atoi(grade)
@@ -126,7 +127,7 @@ func insertque(w http.ResponseWriter, r *http.Request) {
 	// }');
 
 	type Question1 struct {
-		ID      int      `json:"id"`
+		//		ID      int      `json:"id"`
 		Type    string   `json:"type"`
 		Content string   `json:"content"`
 		Options []string `json:"options"`
@@ -137,7 +138,7 @@ func insertque(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var que = &Question1{
-		id1,
+		//		id1,
 		type1,
 		content,
 		options,
@@ -156,7 +157,7 @@ func insertque(w http.ResponseWriter, r *http.Request) {
 	temp1 := string(temp)
 
 	// 插入
-	stmt, err := db.Prepare(`INSERT into login.questionbank (QUES) values (?)`)
+	stmt, err := db.Prepare(`INSERT into login.ques_bank (QUES) values (?)`)
 	res, err := stmt.Exec(temp1)
 	id2, err := res.LastInsertId()
 	fmt.Println(id2)
@@ -262,5 +263,67 @@ func upload(w http.ResponseWriter, r *http.Request) {
 
 		// 返回附件的路径URL
 		fmt.Fprintf(w, "../../static/resources/"+handler.Filename)
+	}
+}
+
+// 插入新的任务
+func inserttask(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+
+	r.ParseForm() // 解析参数，默认是不会解析的
+	// 在控制台上输出信息
+	fmt.Println("Form: ", r.Form)
+	fmt.Println("Path: ", r.URL.Path)
+
+	// 接收到的数据处理
+	deadline := r.Form["deadline"][0]
+	typ := r.Form["type"][0]
+	classname := r.Form["classname"][0]
+	paperNo := r.Form["paperNo"][0]
+
+	// 验证是否登陆
+	sess := globalSessions.SessionStart(w, r)
+	if sess.Get("username") == nil {
+		w.WriteHeader(403)
+
+	} else {
+
+		username := sess.Get("username") // string(body)
+
+		db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8") //登陆msyql
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		defer db.Close()
+
+		// 向任务中插入
+		stmt, err := db.Prepare(`INSERT into login.task (T_No,DEADLINE,TYPE,CLASSNAME,PAPERNo) values (?,?,?,?,?)`)
+		res, err := stmt.Exec(username, deadline, typ, classname, paperNo)
+		id2, err := res.LastInsertId()
+		fmt.Println(id2)
+		defer stmt.Close()
+
+		// `INSERT into login.rept (TaskNo,S_No) values (?)`, (SELECT S_No FROM login.user_student WHERE CLASSNAME = ?classname
+		// "SELECT login.task.CLASSNAME,login.task.TYPE,login.task.DEADLINE,login.paper_bank.paper_name FROM login.task,login.paper_bank where login.task.PAPERNo=login.paper_bank.ID AND login.task.T_No=?", username
+		// AND login.task.ID=?, id2
+
+		// 向成绩单中插入
+		stmt1, err := db.Prepare(`INSERT into login.rept (TaskNo,S_No) SELECT login.task.ID,login.user_student.S_No FROM login.task,login.user_student where login.task.classname=login.user_student.classname AND login.task.ID=?`)
+		if err != nil {
+			fmt.Println(err)
+		}
+		res1, err := stmt1.Exec(id2)
+		if err != nil {
+			fmt.Println(err)
+		}
+		id3, err := res1.LastInsertId()
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(id3)
+		defer stmt1.Close()
+		// 返回“插入成功”
+		w.WriteHeader(200)
 	}
 }

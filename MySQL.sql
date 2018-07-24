@@ -22,6 +22,8 @@ insert into login.questionbank (QUES) values ('{
 }');
 
 
+
+
 /* 
   创建试卷库表
   ID字段主键

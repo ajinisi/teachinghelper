@@ -30,19 +30,19 @@
     <main>
 
       <!-- 分隔栏 -->
-      <div style="grid-row: 1;grid-column:1/13; background-color: aquamarine"> </div>
+      <div class="bar-split"> 生成你的试卷 </div>
 
 
   <div class="left">
       
       <!-- 可以放置的地方 -->
-      <div id="diva" ondrop="drop(event)" ondragover="allowDrop(event)">
-        请从上面方框中添加题目到该试卷
+      <div id="div_paper" ondrop="drop(event)" ondragover="allowDrop(event)">
+        请从右边方框中添加题目到该试卷
       </div>
       <!-- 按钮组 -->
       <ul class="button-group" style="grid-column:4/9;grid-row:23;margin-top: 1px">
-        <li><button id= "button3" > 预览试卷 </button></li>
-        <li><button id= "button4" > 确认提交 </button></li>
+        <li><button id= "button_view" > 预览试卷 </button></li>
+        <li><button id= "button_insert" > 确认提交 </button></li>
       </ul>
   </div>
 

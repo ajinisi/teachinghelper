@@ -44,9 +44,7 @@ function querybank(){
 	  if(req.status == 200){
 		var json_str = xmlHttpRequest.responseText; // json形式的字符串
 		questions = eval('(' + json_str + ')'); // 转化为json格式
-		alert(questions)
 		// var user = JSON.parse(json_str); // 转化为json格式的另一种方式，较安全
-
 	  }
 	  else if(req.status == 404)
 	  {
@@ -156,11 +154,11 @@ function showquestion(i){
 	//document.getElementById('questions').innerHTML+="<div id='div"+i+"' ondrop='drop(event)' ondragover='allowDrop(event)'>"+"<div draggable='true' ondragstart='drag(event)' id='question"+i+"' ></div>"+"</div>"
 	document.getElementById('questions').innerHTML+=
 			`<div class='div' ondrop='drop(event)' ondragover='allowDrop(event)'> 
-					<div draggable='true' ondragstart='drag(event)' id='question${i+1}'></div>
+					<div draggable='true' ondragstart='drag(event)' id='question${questions[i].id}'></div>
 			</div>`
-	
+	 
 	// 显示第i题
-	document.getElementById('question'+(i+1)).innerHTML="<div id ="+"stem"+i+" > </div>"+"<div id = "+"options"+i+"> </div>"
+	document.getElementById('question'+questions[i].id).innerHTML="<div id ="+"stem"+i+" > </div>"+"<div id = "+"options"+i+"> </div>"
 
 
 	// 显示第i题 题干
@@ -368,49 +366,3 @@ function showpaper(){
 
 
 
-
-function insertpaper(){  
-	
-
-	var que=document.getElementById("diva").childNodes//.getElementsByClassName('div')
-	console.log(que)
-	var sen=new Array(que.length);
-	for(var i=0;i<que.length;i++){
-		sen[i]=que[i].id.slice(8)
-	}
-	sen.join(",")
-	alert(sen)
-	//userName = document.f1.username.value;      
-	//passWord = document.f1.password.value;        
-		  
-	//var url = "LoginServlet?username="+userName+"&password="+passWord+"";         
-	var url = "http://localhost:8080/insertpaper";          
-	
-	// // 1.创建XMLHttpRequest组建      
-	xmlHttpRequest = createXmlHttpRequest();      
-	
-
-
-	// // 2.注册回调函数，函数名后面不需要加括号      
-	xmlHttpRequest.onreadystatechange = statechanged1;      
-		  
-	// // 3.初始化XMLHttpRequest组建      
-	xmlHttpRequest.open("POST",url,true);
-	// //xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");      
-		  
-	// //4.发送请求      
-	xmlHttpRequest.send(sen);
-	
-	
-
-  }   
-
-  
-  function statechanged1(){
-	var req = xmlHttpRequest;
-	if(req.readyState == 4 ){
-	  if(req.status == 200){
-		  alert("sucess")
-	  }
-	}
-}

@@ -117,25 +117,44 @@ table tr:nth-child(even){
 }
 
 
+/* 媒体查询 */
 @media  screen and (max-width:1000px){
 	body{
-		width:330px;
+		width:350px;
 		height:550px;
-			margin:0px auto;
-			display: grid;
-			grid-gap: 10px 5px;
-			grid-template-columns: repeat(12, 1fr);
-			grid-template-rows:repeat(24, 1fr);
-	}
-	header{
-		margin-right: 0.5%;
-		font-family:cursive;
-		background-color: #A0A0A0;
-		text-align: center;
-		display: grid;
-		grid-column: 1/13;
-			grid-row: 1;
-	}
+		  margin:auto;
+	  
+		  /* 分为上下两格 */
+		  display: grid;
+		  grid-template-rows:5% 95%;
+	  }
+	  
+	  header{
+		  height: 70px;
+		  font-family:cursive;
+		  background-color: #8cc63e;
+		  text-align: center;
+	  
+		  /* 分为12列 */
+		  display: grid;
+		  grid-template-columns: repeat(12, 1fr);
+		  grid-auto-rows: minmax(10%, auto);	
+	  
+	  }
+	  
+	  main{
+		  margin-top: 10%;
+		height:80%;
+		width:100%;
+		  border:1px solid;
+	  
+		  display: grid;
+		  grid-template-columns: repeat(12, 1fr);
+		  grid-template-rows: repeat(24, 1fr);
+	  }
+
+
+
 	header>a{
 		margin-top:30%;
 			outline: none;
@@ -197,22 +216,22 @@ table tr:nth-child(even){
 }
 
 /* 表单 */
-
 form {
     /* 居中表单 */
     margin: 0 auto;
-    
     width: 450px;
     /* 显示表单的轮廓 */
     padding: 1em;
     border: 1px solid #CCC;
     border-radius: 1em;
   }
-  
+
+  /* 相邻兄弟选择器 */
   form div + div {
     margin-top: 1em;
   }
-  
+
+  /* 后代选择器 */
   form label {
     /* 确保所有label大小相同并正确对齐 */
     display: inline-block;
@@ -300,20 +319,49 @@ form {
 
 
 
-
+/* 首页的图片 */
 .index-png{
 	grid-row: 3/25;
 	grid-column:1/13; 
 	background-image: url(../images/blackboard.png);
 	text-align: center;
 	background-repeat: no-repeat;
-  
 	background-size: 100% 100%;
 }
+
 
 .slogan{
 	grid-row: 9/13;
 	grid-column:1/12; 
 	font-size: 50px;
 	color:white;
+}
+
+
+
+
+/* 题目和选项的样式 */
+.question{
+	border:1px solid;
+	padding: 20px;
+}
+
+.question .option + .option {
+    margin-top: 1em;
+  }
+
+.option{
+	background-color: white;
+	height: 40px;
+	border:2px solid;
+	border-color:gray;
+	line-height:40px;
+	/* 清除li自带的序号 */
+	list-style:none;
+}
+
+
+.option:hover {
+	background-color: rgba(128, 128, 128, 0.315);
+	color:#4CAF50;
 }

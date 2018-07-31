@@ -9,33 +9,38 @@ function createXmlHttpRequest(){
 } 
 
 
+/********* 下面两个函数使用一个回调函数  ********/
 
+// 查询题库中的全部题目
 function querybank(){      
-	//userName = document.f1.username.value;      
-	//passWord = document.f1.password.value;        
-		  
-	//var url = "LoginServlet?username="+userName+"&password="+passWord+"";         
+       
 	var url = "http://localhost:8080/queryquesbank";          
-	
-	// 1.创建XMLHttpRequest组建      
+	    
 	xmlHttpRequest = createXmlHttpRequest();      
-	
-
-
-	// 2.注册回调函数，函数名后面不需要加括号      
+	      
 	xmlHttpRequest.onreadystatechange = statechanged;      
-		  
-	// 3.初始化XMLHttpRequest组建      
+		        
 	xmlHttpRequest.open("POST",url,true);
-	//xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");      
-		  
-	//4.发送请求      
+      
 	xmlHttpRequest.send(null);
 	
-	
+}         
 
-  }         
-		
+
+// 查询具体的某一张试卷中全部题目
+function querypaper(n){      
+        
+	var url = "http://localhost:8080/querypaper";          
+	   
+	xmlHttpRequest = createXmlHttpRequest();      
+	    
+	xmlHttpRequest.onreadystatechange = statechanged;      
+		       
+	xmlHttpRequest.open("POST",url,true);
+    
+	xmlHttpRequest.send(n);
+	
+} 
 		
   // 回调函数      
   function statechanged(){
@@ -147,135 +152,6 @@ var questions = [
 */
 
 
-function showquestion(i){
-
-
-	// 可以拖动的东西 
-	//document.getElementById('questions').innerHTML+="<div id='div"+i+"' ondrop='drop(event)' ondragover='allowDrop(event)'>"+"<div draggable='true' ondragstart='drag(event)' id='question"+i+"' ></div>"+"</div>"
-	document.getElementById('questions').innerHTML+=
-			`<div class='div' ondrop='drop(event)' ondragover='allowDrop(event)'> 
-					<div draggable='true' ondragstart='drag(event)' id='question${questions[i].id}'></div>
-			</div>`
-	 
-	// 显示第i题
-	document.getElementById('question'+questions[i].id).innerHTML="<div id ="+"stem"+i+" > </div>"+"<div id = "+"options"+i+"> </div>"
-
-
-	// 显示第i题 题干
-	document.getElementById("stem"+i).innerHTML="题目"+(i+1)+"："+questions[i].content;
-
-	// 判断题目类型
-	if(questions[i].type == 'single' || questions[i].type == 'multiple') {
-
-		// 显示选项
-		var op = "<ol>"
-		for  (var j=0;j<questions[i].options.length;j++){
-			op+="<li>"
-			var id1='o'+i+j
-			op+="<input name='identity"+i+"' type='radio' value="+j+" id="+id1
-			// check whether the option is the answer, if so, present it
-			// 判断该选项是否为答案，如果是则默认选择
-			if(questions[i].answers[0]==j){
-				op+=" checked>"
-			}else{
-				op+=">"
-			}
-			op+="<label for="+id1+">"+(questions[i].options)[j]+"</label>"
-			op+="</li>"
-		} 
-		op+="</ol>"
-		document.getElementById('options'+i).innerHTML=op
-		
-
-	}
-
-
-
-	// 判断题目类型
-  if(questions[i].type == 'judgment') {
-
-    // 显示选项
-    var op = "\
-              <ul><li>\
-                <input name='identity' type='radio' value=true id='i1'>\
-                <label for='i1'>正确</label>\
-              </li><li>\
-                <input name='identity' type='radio' value=false id='i2'>\
-                <label for='i2'>错误</label>\
-              </li></ul>\
-              "
-
-    document.getElementById('options'+i).innerHTML=op
-    i1.oninput = function(){
-        questions[i].userAnswer = i1.value
-        alert(questions[i].userAnswer)
-    }
-    i2.oninput = function(){
-        questions[i].userAnswer = i2.value
-        alert(questions[i].userAnswer)
-    }
-    
-  }   
-
-	// 判断题目类型
-	if(questions[i].type == 'fill') {
-
-		// 显示选项
-		var op = ""
-		for  (var j=0;j<questions[i].answers.length;j++){
-				op+="<input type='text' "
-				op+=`placeholder=${questions[i].answers[j]}`
-				op+=">"
-		} 
-		document.getElementById('options'+i).innerHTML=op
-
-	}     
-
-    // 如果有附件则显示附件
-	if(questions[i].URL != null) {
-		
-		var z1=`
-		<audio controls="controls" style="width:80%">
-		  Your browser does not support the <code>audio</code> element.
-		  <source src=${questions[i].URL} type="audio/wav">
-		</audio>`
-		document.getElementById('options'+i).innerHTML+=z1
-	}
-}
-
-
-
-//  <audio src=${questions[i].URL} autoplay>
-// Your browser does not support the <code>audio</code> element.
-// </audio>
-
-
-
-			
-
-
-
-function bindoptions(i){
-		var btns = document.querySelectorAll(`[name="identity${i}"]`);
-					
-		function bgChange(o){                        
-				questions[i].userAnswer = o.value
-				alert(questions[i].userAnswer)
-		}                    
-	
-		for(var j=0;j<btns.length;j++){
-			a1(j)
-		}
-	
-		function a1(j){
-			btns[j].addEventListener('click', function(){
-				bgChange(eval('o'+i+j))
-			})
-		}
-}
-
-
-
 
 
 
@@ -307,37 +183,8 @@ function bindoptions(i){
 
 
 
-
-// 选择题型的按钮
-
-function select(){
-	$(document).click(function(){
-		$(".select_module_con ul").slideUp();
-	})
-	var module=$(".select_result"); 
-	module.click(function(e){
-		e.stopPropagation();
-		var ul=$(this).next();
-		ul.stop().slideToggle();
-		ul.children().click(function(e){
-			e.stopPropagation();
-			$(this).parent().prev().children("span").text($(this).text());
-			ul.stop().slideUp();
-		})
-	})
-}
-
-
-
-      
- 
-
-
-
-
-
 //赋值到另一张html中
-function showpaper(){   
+function showPaper(){   
 
 		
 	// 新建一个空白
@@ -365,4 +212,24 @@ function showpaper(){
 
 
 
+/***** 处理其他页面传来的值 ********/
 
+var url = location.search; // 获取url中"?"符后的字串
+var theRequest = new Object();
+
+if ( url.indexOf( "?" ) != -1 ) {
+
+  var str = url.substr( 1 ); //substr()方法返回从参数值开始到结束的字符串，即去除问号"?"；
+  
+  
+  // 处理字符串成键值对
+  var strs = str.split( "&" );
+  for ( var i = 0; i < strs.length; i++ ) {
+
+    theRequest[ strs[ i ].split( "=" )[ 0 ] ] = ( strs[ i ].split( "=" )[ 1 ] );
+
+  }
+
+  console.log(theRequest); // 此时的theRequest就是我们需要的参数；
+
+}

@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -134,70 +133,70 @@ func queryquesbank(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
 
 	// 验证是否登陆
-	sess := globalSessions.SessionStart(w, r)
-	if sess.Get("username") == nil {
-		w.WriteHeader(403)
-		t, err := template.ParseFiles("view/login.html")
-		if err != nil {
-			log.Println(err)
-		}
-		// ??
-		w.Header().Set("Content-Type", "text/html")
-		t.Execute(w, nil)
+	// sess := globalSessions.SessionStart(w, r)
+	// if sess.Get("username") == nil {
+	// 	w.WriteHeader(403)
+	// 	t, err := template.ParseFiles("view/login.html")
+	// 	if err != nil {
+	// 		log.Println(err)
+	// 	}
+	// 	// ??
+	// 	w.Header().Set("Content-Type", "text/html")
+	// 	t.Execute(w, nil)
 
-		http.Redirect(w, r, "view/login.html", http.StatusFound)
+	// 	http.Redirect(w, r, "view/login.html", http.StatusFound)
 
-	} else {
+	// } else {
 
-		db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
-		if err != nil {
-			//fmt.Println(err)
-			fmt.Printf("连接数据库失败")
-		}
+	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
+	if err != nil {
+		//fmt.Println(err)
+		fmt.Printf("连接数据库失败")
+	}
 
-		defer db.Close()
+	defer db.Close()
 
-		rows, err := db.Query("SELECT ID,QUES FROM login.ques_bank")
-		if err != nil {
+	rows, err := db.Query("SELECT ID,QUES FROM login.ques_bank")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	var tem int
+	var temp string
+	var questions []interface{}
+	var question interface{}
+
+	for rows.Next() {
+		if err := rows.Scan(&tem, &temp); err != nil {
 			log.Fatal(err)
 		}
+		// 未知类型的推荐处理方法
 
-		defer rows.Close()
+		temp = strings.Replace(temp, "}", ",", 1)
+		temp = temp + "\"id\":" + strconv.Itoa(tem) + "}"
+		fmt.Println(temp)
+		json.Unmarshal([]byte(temp), &question)
+		questions = append(questions, question)
 
-		var tem int
-		var temp string
-		var questions []interface{}
-		var question interface{}
+		//貌似也可以
+		// if err := rows.Scan(&question); err != nil {
+		// 	log.Fatal(err)
+		// }
+		// questions = append(questions, question)
 
-		for rows.Next() {
-			if err := rows.Scan(&tem, &temp); err != nil {
-				log.Fatal(err)
-			}
-			// 未知类型的推荐处理方法
-
-			temp = strings.Replace(temp, "}", ",", 1)
-			temp = temp + "\"id\":" + strconv.Itoa(tem) + "}"
-			fmt.Println(temp)
-			json.Unmarshal([]byte(temp), &question)
-			questions = append(questions, question)
-
-			//貌似也可以
-			// if err := rows.Scan(&question); err != nil {
-			// 	log.Fatal(err)
-			// }
-			// questions = append(questions, question)
-
-		}
-
-		ret, json_err := json.Marshal(&questions) // json化结果集
-		if json_err != nil {
-			log.Println(json_err)
-		}
-		fmt.Fprint(w, string(ret)) // json转化为字符串发送
-		//log.Println(string(ret))
-		//w.WriteHeader(200)
-		//}
 	}
+
+	ret, json_err := json.Marshal(&questions) // json化结果集
+	if json_err != nil {
+		log.Println(json_err)
+	}
+	fmt.Fprint(w, string(ret)) // json转化为字符串发送
+	//log.Println(string(ret))
+	w.WriteHeader(200)
+	//}
+	//}
 }
 
 // 查询试卷内容
@@ -219,6 +218,8 @@ func querypaper(w http.ResponseWriter, r *http.Request) {
 		//fmt.Println(err)
 		fmt.Printf("连接数据库失败")
 	}
+
+	// 只能分两次查询，无法使用子查询
 
 	var temp1 string
 	row := db.QueryRow("SELECT PAPERCONTENT FROM login.paper_bank where id=?", num)
@@ -261,6 +262,75 @@ func querypaper(w http.ResponseWriter, r *http.Request) {
 		log.Println(json_err)
 	}
 	fmt.Fprint(w, string(ret)) // json转化为字符串发送
+	fmt.Println(string(ret))
+
+	// w.WriteHeader(200)
+}
+
+// 通过任务taskNo来查询试卷内容
+func queryPaperByTaskNo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+
+	// r.ParseForm() // 解析参数，默认是不会解析的
+	// // 在控制台上输出信息
+	// fmt.Println("Form: ", r.Form)
+	// fmt.Println("Path: ", r.URL.Path)
+	// //username := r.Form["username"][0]
+	// date := r.Form["date"][0]
+
+	body, _ := ioutil.ReadAll(r.Body)
+	var num = string(body)
+	fmt.Println(num)
+	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
+	if err != nil {
+		//fmt.Println(err)
+		fmt.Printf("连接数据库失败")
+	}
+
+	// 只能分两次查询，无法使用子查询
+
+	var temp1 string
+	row := db.QueryRow("SELECT PAPERCONTENT FROM login.paper_bank,login.task where task.PAPERNo=paper_bank.ID AND task.id=?", num)
+	if err := row.Scan(&temp1); err != nil {
+		log.Fatal(err)
+	}
+
+	// rows, err := db.Query("SELECT QUES FROM login.questionbank")
+	// rows, err := db.Query("SELECT QUES FROM login.questionbank where QUES->'$.type'='fill'")
+	rows, err := db.Query("SELECT QUES FROM login.ques_bank where ID in (" + temp1 + ")" + "order by field(ID," + temp1 + ")")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	var temp string
+	var questions []interface{}
+	var question interface{}
+
+	for rows.Next() {
+		if err := rows.Scan(&temp); err != nil {
+			log.Fatal(err)
+		}
+		// 未知类型的推荐处理方法
+
+		json.Unmarshal([]byte(temp), &question)
+		questions = append(questions, question)
+
+		//貌似也可以
+		// if err := rows.Scan(&question); err != nil {
+		// 	log.Fatal(err)
+		// }
+		// questions = append(questions, question)
+
+	}
+
+	ret, json_err := json.Marshal(&questions) // json化结果集
+	if json_err != nil {
+		log.Println(json_err)
+	}
+	fmt.Fprint(w, string(ret)) // json转化为字符串发送
+	fmt.Println(string(ret))
 
 	// w.WriteHeader(200)
 }
@@ -318,6 +388,8 @@ func querypapers(w http.ResponseWriter, r *http.Request) {
 			log.Println(json_err)
 		}
 		fmt.Fprint(w, string(ret)) // json转化为字符串发送
+
+		w.WriteHeader(200)
 	}
 }
 
@@ -348,7 +420,7 @@ func insertpaper(w http.ResponseWriter, r *http.Request) {
 		res, err := stmt.Exec(username, paperContent, paperName)
 		id, err := res.LastInsertId()
 		fmt.Println(id)
-
+		defer stmt.Close()
 		// 返回“插入成功”
 		w.WriteHeader(200)
 	}
@@ -361,6 +433,7 @@ func querytasks(w http.ResponseWriter, r *http.Request) {
 
 	// 验证是否登陆
 	sess := globalSessions.SessionStart(w, r)
+	fmt.Println(sess)
 	if sess.Get("username") == nil {
 		w.WriteHeader(403)
 
@@ -368,7 +441,7 @@ func querytasks(w http.ResponseWriter, r *http.Request) {
 
 		// body, _ := ioutil.ReadAll(r.Body)
 		username := sess.Get("username") // string(body)
-
+		fmt.Println(username)
 		db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
 		if err != nil {
 			//fmt.Println(err)
@@ -411,6 +484,8 @@ func querytasks(w http.ResponseWriter, r *http.Request) {
 			log.Println(json_err)
 		}
 		fmt.Fprint(w, string(ret)) // json转化为字符串发送
+
+		w.WriteHeader(200)
 	}
 }
 
@@ -439,23 +514,42 @@ func querytask(w http.ResponseWriter, r *http.Request) {
 			fmt.Printf("连接数据库失败")
 		}
 
-		// Query 查询
-		rows, err := db.Query("SELECT S_No,RESULT FROM login.rept where TASKNo=?", taskID)
+		var temp1, temp2 string
+
+		type report struct {
+			Username       string `json:"username"`
+			CompletionDate string `json:"submittedAt"`
+		}
+		var reports []report
+
+		// 分开查询以处理提交时间为空的情形
+		rows, err := db.Query("SELECT S_No FROM login.rept where TASKNo=? AND submitted_at is null", taskID)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		defer db.Close()
 
-		var temp1, temp2 string
-
-		type report struct {
-			Username       string `json:"username"`
-			CompletionDate string `json:"completiondate"`
-		}
-		var reports []report
 		for rows.Next() {
-			if err := rows.Scan(&temp1, &temp2); err != nil {
+			if err := rows.Scan(&temp1); err != nil {
+				log.Fatal(err)
+			}
+			var pap = report{
+				temp1,
+				"",
+			}
+			reports = append(reports, pap)
+		}
+
+		rows1, err := db.Query("SELECT S_No,submitted_at FROM login.rept where TASKNo=? AND submitted_at is true", taskID)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		defer db.Close()
+
+		for rows1.Next() {
+			if err := rows1.Scan(&temp1, &temp2); err != nil {
 				log.Fatal(err)
 			}
 			var pap = report{
@@ -546,31 +640,56 @@ func querytodo(w http.ResponseWriter, r *http.Request) {
 			fmt.Printf("连接数据库失败")
 		}
 
-		// Query 查询
-		rows, err := db.Query("SELECT PAPERNo,RESULT,paper_name FROM login.rept,login.task,login.paper_bank where TASKNo=login.task.ID AND PAPERNo=login.paper_bank.ID AND S_No = ?", username)
+		type clan struct {
+			PaperNo     int    `json:"paperNo"`
+			TaskNo      int    `json:"taskNo"`
+			PaperName   string `json:"papername"`
+			SubmittedAt string `json:"submittedAt"`
+		}
+		var clas []clan
+
+		var temp1, temp4 int
+		var temp3 string
+		var temp5 string
+
+		// 从成绩单表获得该学生所有的任务No，从任务表获得每个任务对应的试卷No，从试卷库表获得每个试卷名称
+		rows, err := db.Query("SELECT TASKNo,PAPERNo,paper_name FROM login.rept,login.task,login.paper_bank where TASKNo=login.task.ID AND PAPERNo=login.paper_bank.ID AND S_No = ? AND submitted_at is null", username)
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		defer db.Close()
 
-		var temp1 int
-		var temp2, temp3 string
-
-		type clan struct {
-			PaperNo   int    `json:"paperNo"`
-			Result    string `json:"result"`
-			PaperName string `json:"papername"`
-		}
-		var clas []clan
 		for rows.Next() {
-			if err := rows.Scan(&temp1, &temp2, &temp3); err != nil {
+			if err := rows.Scan(&temp4, &temp1, &temp3); err != nil {
 				log.Fatal(err)
 			}
+			fmt.Println(temp5)
+
 			var cla = clan{
 				temp1,
-				temp2,
+				temp4,
 				temp3,
+				"",
+			}
+			clas = append(clas, cla)
+		}
+
+		rows1, err := db.Query("SELECT TASKNo,submitted_at,PAPERNo,paper_name FROM login.rept,login.task,login.paper_bank where TASKNo=login.task.ID AND PAPERNo=login.paper_bank.ID AND S_No = ? AND submitted_at is true", username)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer db.Close()
+
+		for rows1.Next() {
+			if err := rows1.Scan(&temp4, &temp5, &temp1, &temp3); err != nil {
+				log.Fatal(err)
+			}
+
+			var cla = clan{
+				temp1,
+				temp4,
+				temp3,
+				temp5,
 			}
 			clas = append(clas, cla)
 		}

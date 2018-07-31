@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -76,6 +77,7 @@ func insert(w http.ResponseWriter, r *http.Request) {
 	res, err := stmt.Exec(teacher.Date, teacher.Username, temp1)
 	id, err := res.LastInsertId()
 	fmt.Println(id)
+	defer stmt.Close()
 
 	// 返回“插入成功”
 	w.WriteHeader(200)
@@ -83,7 +85,7 @@ func insert(w http.ResponseWriter, r *http.Request) {
 }
 
 // 插入原创题目
-func insertque(w http.ResponseWriter, r *http.Request) {
+func insertQues(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
 
 	r.ParseForm() // 解析参数，默认是不会解析的
@@ -161,70 +163,310 @@ func insertque(w http.ResponseWriter, r *http.Request) {
 	res, err := stmt.Exec(temp1)
 	id2, err := res.LastInsertId()
 	fmt.Println(id2)
-
+	defer stmt.Close()
 	// 返回“插入成功”
 	w.WriteHeader(200)
 }
 
-// querygrade 计算学生的成绩并返回
-func querygrade(w http.ResponseWriter, r *http.Request) {
+// // 存储学生答案results
+// func insertResult(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+
+// 	r.ParseForm() // 解析参数，默认是不会解析的
+// 	// 在控制台上输出信息
+// 	fmt.Println("Form: ", r.Form)
+// 	fmt.Println("Path: ", r.URL.Path)
+
+// 	taskNo := r.Form["taskNo"][0]
+
+// 	sess := globalSessions.SessionStart(w, r)
+// 	username := sess.Get("username")
+
+// 	var result [][]string
+
+// 	body, _ := ioutil.ReadAll(r.Body)
+// 	fmt.Println(string(body))
+// 	if err := json.Unmarshal(body, &result); err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Println(result)
+
+// 	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8") //登陆msyql
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	defer db.Close()
+
+// 	// 插入学生的做题结果result和提交时间
+// 	stmt, err := db.Prepare(`UPDATE login.rept SET result=?,submitted_at=? where S_No=? AND TASKNo=?`)
+// 	res, err := stmt.Exec(string(body), time.Now(), username, taskNo)
+// 	id2, err := res.LastInsertId()
+// 	fmt.Println(id2)
+// 	defer stmt.Close()
+
+// 	// 查找试卷的答案
+// 	var temp1 string
+// 	row := db.QueryRow("SELECT PAPERCONTENT FROM login.paper_bank,task where task.PAPERNo = paper_bank.ID AND task.ID=?", taskNo)
+// 	if err := row.Scan(&temp1); err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	rows, err := db.Query("SELECT QUES->'$.answers' FROM login.ques_bank where ID in (" + temp1 + ")" + "order by field(ID," + temp1 + ")")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	defer rows.Close()
+
+// 	var temp string
+// 	var answers [][]string
+// 	var answer []string
+
+// 	for rows.Next() {
+// 		if err := rows.Scan(&temp); err != nil {
+// 			log.Fatal(err)
+// 		}
+
+// 		// 未知类型的推荐处理方法
+// 		json.Unmarshal([]byte(temp), &answer)
+
+// 		/***
+// 		***如果不使用深复制，则每次追加操作都会改变前面的值，因为追加的是同一个地址
+// 		***调了一个下午！！！
+// 		***/
+// 		slice := make([]string, len(answer))
+// 		copy(slice, answer)
+// 		answers = append(answers, slice)
+
+// 	}
+// 	fmt.Println(answers)
+
+// 	// 再计算学生的对错grades和得分scores
+// 	grades := make([][]string, len(answers))
+
+// 	for i := 0; i < len(answers); i++ {
+// 		for j := 0; j < len(answers[i]); j++ {
+// 			if result[i][j] == answers[i][j] {
+// 				grades[i] = append(grades[i], "1")
+// 			} else {
+// 				grades[i] = append(grades[i], "0")
+// 			}
+// 		}
+// 	}
+// 	fmt.Println(grades)
+// 	temp11, _ := json.Marshal(&grades)
+
+// 	// 插入学生的做题对错grades
+// 	stmt1, err := db.Prepare(`UPDATE login.rept SET grade=? where S_No=? AND TASKNo=?`)
+// 	res1, err := stmt1.Exec(string(temp11), username, taskNo)
+// 	id3, err := res1.LastInsertId()
+// 	fmt.Println(id3)
+// 	defer stmt1.Close()
+
+// 	// 返回“插入成功”
+// 	w.WriteHeader(200)
+
+// }
+
+type ReturnValue struct {
+	Result [][]string `json:"results"`
+	Score  []int      `json:"scores"`
+	Grade  [][]string `json:"grades"`
+}
+
+// 存储学生
+func insertAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
 
-	var student Student
-	var teacher Teacher
+	r.ParseForm() // 解析参数，默认是不会解析的
+	// 在控制台上输出信息
+	fmt.Println("Form: ", r.Form)
+	fmt.Println("Path: ", r.URL.Path)
+
+	taskNo := r.Form["taskNo"][0]
+
+	sess := globalSessions.SessionStart(w, r)
+	username := sess.Get("username")
+
+	var returnValue ReturnValue
+
 	body, _ := ioutil.ReadAll(r.Body)
-	if err := json.Unmarshal(body, &student); err != nil {
+	fmt.Println(string(body))
+	if err := json.Unmarshal(body, &returnValue); err != nil {
 		fmt.Println(err)
 	}
 
-	// Open 打开
-	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
-	if err != nil {
-		//fmt.Println(err)
-		fmt.Printf("连接数据库失败")
-	}
+	temp1, _ := json.Marshal(&returnValue.Result)
+	temp2, _ := json.Marshal(&returnValue.Grade)
+	temp3, _ := json.Marshal(&returnValue.Score)
 
-	// 从数据库提取学生的解答
-	row := db.QueryRow("SELECT * FROM login.myque WHERE username = ? AND date = ?", student.Username, student.Date)
-	var temp string
-	err = row.Scan(&temp) // 遍历结果
+	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8") //登陆msyql
 	if err != nil {
 		fmt.Println(err)
 	}
-	if err := json.Unmarshal([]byte(temp), &student.Solutions); err != nil {
-		fmt.Println(err)
-	}
-	// 从数据库提取老师的问题
-	row1 := db.QueryRow("SELECT * FROM login.myque WHERE username = 'root' AND date = ?", student.Date)
-	err = row1.Scan(&temp) // 遍历结果
-	if err != nil {
-		fmt.Println(err)
-	}
-	if err := json.Unmarshal([]byte(temp), &teacher.Questions); err != nil {
-		fmt.Println(err)
-	}
+	defer db.Close()
 
-	// 计算学生的成绩
-	for i := 0; i < len(teacher.Questions); i++ {
-		for j := 0; j < len(teacher.Questions[i].Answers); j++ {
-			if student.Solutions[i].Result[j] == teacher.Questions[i].Answers[j] {
-				student.Solutions[i].Grade = append(student.Solutions[i].Grade, "1")
-			} else {
-				student.Solutions[i].Grade = append(student.Solutions[i].Grade, "0")
-			}
-		}
-	}
+	// 插入学生的做题结果result和提交时间
+	stmt, err := db.Prepare(`UPDATE login.rept SET result=?,grade=?,score=?,submitted_at=? where S_No=? AND TASKNo=?`)
+	res, err := stmt.Exec(string(temp1), string(temp2), string(temp3), time.Now(), username, taskNo)
+	id2, err := res.LastInsertId()
+	fmt.Println(id2)
+	defer stmt.Close()
 
-	// 将学生成绩存储在数据库中
-	temp1, _ := json.Marshal(&student.Solutions)
-	temp2 := string(temp1)
-
-	stmt1, err := db.Prepare(`INSERT datas (DATE,USERNAME,QUESTIONS) values (?,?,?)`)
-	res1, err := stmt1.Exec(student.Date, student.Username, temp2)
-	id1, err := res1.LastInsertId()
-	fmt.Println(id1)
+	// 返回“插入成功”
+	w.WriteHeader(200)
 
 }
+
+// 返回学生成绩
+func queryResult(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+
+	r.ParseForm() // 解析参数，默认是不会解析的
+	// 在控制台上输出信息
+	fmt.Println("Form: ", r.Form)
+	fmt.Println("Path: ", r.URL.Path)
+
+	taskNo := r.Form["taskNo"][0]
+
+	sess := globalSessions.SessionStart(w, r)
+	username := sess.Get("username")
+
+	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8") //登陆msyql
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer db.Close()
+
+	var results [][]string
+	var scores []int
+	var grades [][]string
+
+	var temp1, temp2, temp3 string
+
+	row := db.QueryRow("SELECT result,grade,score FROM login.rept where taskNo=? AND S_No=?", taskNo, username)
+	if err := row.Scan(&temp1, &temp2, &temp3); err != nil {
+		log.Fatal(err)
+	}
+
+	json.Unmarshal([]byte(temp1), &results)
+	json.Unmarshal([]byte(temp2), &grades)
+	json.Unmarshal([]byte(temp3), &scores)
+
+	var returnValue = &ReturnValue{
+		results,
+		scores,
+		grades,
+	}
+	temp12, _ := json.Marshal(&returnValue)
+	fmt.Fprint(w, string(temp12))
+
+	w.WriteHeader(200)
+}
+
+// 教师查询具体某一个学生的成绩
+func queryResultByUsername(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+
+	r.ParseForm() // 解析参数，默认是不会解析的
+	// 在控制台上输出信息
+	fmt.Println("Form: ", r.Form)
+	fmt.Println("Path: ", r.URL.Path)
+
+	taskNo := r.Form["taskNo"][0]
+	username := r.Form["username"][0]
+
+	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8") //登陆msyql
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer db.Close()
+
+	var results [][]string
+	var scores []int
+	var grades [][]string
+
+	var temp1, temp2, temp3 string
+
+	row := db.QueryRow("SELECT result,grade,score FROM login.rept where taskNo=? AND S_No=?", taskNo, username)
+	if err := row.Scan(&temp1, &temp2, &temp3); err != nil {
+		log.Fatal(err)
+	}
+
+	json.Unmarshal([]byte(temp1), &results)
+	json.Unmarshal([]byte(temp2), &grades)
+	json.Unmarshal([]byte(temp3), &scores)
+
+	var returnValue = &ReturnValue{
+		results,
+		scores,
+		grades,
+	}
+	temp12, _ := json.Marshal(&returnValue)
+	fmt.Fprint(w, string(temp12))
+
+	w.WriteHeader(200)
+}
+
+// // querygrade 计算学生的成绩并返回
+// func querygrade(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+
+// 	var student Student
+// 	var teacher Teacher
+// 	body, _ := ioutil.ReadAll(r.Body)
+// 	if err := json.Unmarshal(body, &student); err != nil {
+// 		fmt.Println(err)
+// 	}
+
+// 	// Open 打开
+// 	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
+// 	if err != nil {
+// 		//fmt.Println(err)
+// 		fmt.Printf("连接数据库失败")
+// 	}
+
+// 	// 从数据库提取学生的解答
+// 	row := db.QueryRow("SELECT * FROM login.myque WHERE username = ? AND date = ?", student.Username, student.Date)
+// 	var temp string
+// 	err = row.Scan(&temp) // 遍历结果
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	if err := json.Unmarshal([]byte(temp), &student.Solutions); err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	// 从数据库提取老师的问题
+// 	row1 := db.QueryRow("SELECT * FROM login.myque WHERE username = 'root' AND date = ?", student.Date)
+// 	err = row1.Scan(&temp) // 遍历结果
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	if err := json.Unmarshal([]byte(temp), &teacher.Questions); err != nil {
+// 		fmt.Println(err)
+// 	}
+
+// 	// 计算学生的成绩
+// 	for i := 0; i < len(teacher.Questions); i++ {
+// 		for j := 0; j < len(teacher.Questions[i].Answers); j++ {
+// 			if student.Solutions[i].Result[j] == teacher.Questions[i].Answers[j] {
+// 				student.Solutions[i].Grade = append(student.Solutions[i].Grade, "1")
+// 			} else {
+// 				student.Solutions[i].Grade = append(student.Solutions[i].Grade, "0")
+// 			}
+// 		}
+// 	}
+
+// 	// 将学生成绩存储在数据库中
+// 	temp1, _ := json.Marshal(&student.Solutions)
+// 	temp2 := string(temp1)
+
+// 	stmt1, err := db.Prepare(`INSERT datas (DATE,USERNAME,QUESTIONS) values (?,?,?)`)
+// 	res1, err := stmt1.Exec(student.Date, student.Username, temp2)
+// 	id1, err := res1.LastInsertId()
+// 	fmt.Println(id1)
+// 	defer stmt1.Close()
+// }
 
 // 上传附件，如头像，图片，音频
 func upload(w http.ResponseWriter, r *http.Request) {
@@ -323,6 +565,7 @@ func inserttask(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println(id3)
 		defer stmt1.Close()
+
 		// 返回“插入成功”
 		w.WriteHeader(200)
 	}

@@ -48,9 +48,14 @@ func main() {
 	http.HandleFunc("/insertpaper", insertpaper)
 	http.HandleFunc("/inserttask", inserttask)
 	http.HandleFunc("/upload", upload)
-	http.HandleFunc("/insertque", insertque)
+	http.HandleFunc("/insertque", insertQues)
+	// http.HandleFunc("/insertresult", insertResult)
+	http.HandleFunc("/queryResult", queryResult)
 
-	http.HandleFunc("/quer", quer)
+	http.HandleFunc("/insertAll", insertAll)
+
+	http.HandleFunc("/queryPaperByTaskNo", queryPaperByTaskNo)
+	http.HandleFunc("/queryResultByUsername", queryResultByUsername)
 
 	//mux.HandleFunc("/index", index)
 
@@ -141,6 +146,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		} else {
 
 			sess.Set("username", username[0])
+			fmt.Println(sess)
 
 			w.WriteHeader(200)
 			t, err := template.ParseFiles("index.html")

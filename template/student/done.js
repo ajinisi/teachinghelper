@@ -46,7 +46,7 @@ window.setTimeout(function(){
 
 function queryResult(){
 	
-  var url = "http://localhost:8080/queryResult?taskNo="+theRequest.taskNo;          
+  var url = config.SOCKAddr+"/queryResult?taskNo="+theRequest.taskNo;          
 	   
 	xmlHttpRequest = createXmlHttpRequest();      
 	    

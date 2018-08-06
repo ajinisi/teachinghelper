@@ -1,4 +1,18 @@
-  
+// 配置
+var config={
+    "IPAddr":"http://localhost",
+    "PORT":"8080",
+    "SOCKAddr":"http://localhost:8080"
+}
+
+
+// ajax导入json配置
+// $.get('../../config.json').done(function(config){
+//     console.log(config)
+// });
+
+
+      
 //XmlHttpRequest对象      
 function createXmlHttpRequest(){      
     if(window.ActiveXObject){ //如果是IE浏览器      
@@ -13,8 +27,9 @@ function createXmlHttpRequest(){
 
 // 查询题库中的全部题目
 function querybank(){      
-       
-	var url = "http://localhost:8080/queryquesbank";          
+	
+	var url = config.SOCKAddr+"/queryquesbank";
+	// var url = "http://192.168.1.129:8080/queryquesbank";          
 	    
 	xmlHttpRequest = createXmlHttpRequest();      
 	      
@@ -30,7 +45,7 @@ function querybank(){
 // 查询具体的某一张试卷中全部题目
 function querypaper(n){      
         
-	var url = "http://localhost:8080/querypaper";          
+	var url = config.SOCKAddr+"/querypaper";          
 	   
 	xmlHttpRequest = createXmlHttpRequest();      
 	    
@@ -233,3 +248,98 @@ if ( url.indexOf( "?" ) != -1 ) {
   console.log(theRequest); // 此时的theRequest就是我们需要的参数；
 
 }
+
+
+
+
+function showQuestion(i){
+
+
+	// 可以拖动的东西 
+	//document.getElementById('questionPlace').innerHTML+="<div id='div"+i+"' ondrop='drop(event)' ondragover='allowDrop(event)'>"+"<div draggable='true' ondragstart='drag(event)' id='question"+i+"' ></div>"+"</div>"
+	document.getElementById('questionPlace').innerHTML+=
+			`<div class='div' ondrop='drop(event)' ondragover='allowDrop(event)'> 
+					<div draggable='true' ondragstart='drag(event)' id='question${questions[i].id}' class='questionGroup'></div>
+			</div>`
+	 
+	// 显示第i题
+	document.getElementById('question'+questions[i].id).innerHTML="<div id ="+"stem"+i+" > </div>"+"<div id=options"+i+"> </div>"
+
+
+	// 显示第i题 题干
+	document.getElementById("stem"+i).innerHTML="题目"+(i+1)+"："+questions[i].content;
+
+	// 判断题目类型
+	if(questions[i].type == 'single' || questions[i].type == 'multiple') {
+
+		// 显示选项
+		var op = "<ol>"
+		for  (var j=0;j<questions[i].options.length;j++){
+			op+="<li class='optionGroup'>"
+			var id1='o'+i+j
+			op+="<input name='identity"+i+"' type='radio' value="+j+" id="+id1
+			
+			// check whether the option is the answer, if so, present it
+			// 判断该选项是否为答案，如果是则默认选择
+			if(questions[i].answers[0]==j){
+				op+=" checked>"
+			}else{
+				op+=">"
+			}
+			op+="<label for="+id1+">"+(questions[i].options)[j]+"</label>"
+			op+="</li>"
+		} 
+		op+="</ol>"
+		document.getElementById('options'+i).innerHTML=op
+		
+
+	}
+
+
+
+	// 判断题目类型
+  if(questions[i].type == 'judge') {
+    // 显示选项
+    var op = "\
+              <ul><li>\
+                <input name='identity' type='radio' value=true id='i1'>\
+                <label for='i1'>正确</label>\
+              </li><li>\
+                <input name='identity' type='radio' value=false id='i2'>\
+                <label for='i2'>错误</label>\
+              </li></ul>\
+              "
+    document.getElementById('options'+i).innerHTML=op
+  }   
+
+	// 判断题目类型
+	if(questions[i].type == 'fill') {
+
+		// 显示选项
+		var op = ""
+		for  (var j=0;j<questions[i].answers.length;j++){
+				op+="<input class='blank' type='text' "
+				op+=`placeholder=${questions[i].answers[j]}`
+				op+=">"
+		} 
+		document.getElementById('options'+i).innerHTML=op
+
+	}     
+
+    // 如果有附件则显示附件
+	if(questions[i].URL != null) {
+		
+		var z1=`
+		<audio controls="controls" style="width:80%">
+		  Your browser does not support the <code>audio</code> element.
+		  <source src=${questions[i].URL} type="audio/wav">
+		</audio>`
+		document.getElementById('options'+i).innerHTML+=z1
+	}
+}
+
+  
+
+//  <audio src=${questions[i].URL} autoplay>
+// Your browser does not support the <code>audio</code> element.
+// </audio>

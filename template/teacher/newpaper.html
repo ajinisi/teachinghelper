@@ -36,7 +36,7 @@
   <div class="left">
       
       <!-- 可以放置的地方 -->
-      <div id="div_paper" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <div id="paperPlace" ondrop="drop(event)" ondragover="allowDrop(event)">
         请从右边方框中添加题目到该试卷
       </div>
       <!-- 按钮组 -->
@@ -49,30 +49,33 @@
                           
     <!-- 右边部分 -->
     <div class="right">
-      <div class="cj">
-        <a  href="#" style="grid-row: 1/2">题型</a>
-        <a  href="#" style="color:green;grid-row: 1/2" id="all">全部</a>
-        <a  href="#" style="grid-row: 1/2" id='choose'>选择题</a>
-        <a  href="#" style="grid-row: 1/2">填空题</a>
-        <a  href="#" style="grid-row: 1/2">判断题</a>
-
-        <a  href="#" style="grid-row: 2/3">题类</a>
+      <div class="filter">
+        <div>
+          <strong>题型：</strong>
+          <a  href="#" style="color:green;" value="all">全部</a>
+          <a  href="#" value='single'>选择题</a>
+          <a  href="#" value='fill'>填空题</a>
+          <a  href="#" value='judge'>判断题</a>
+        </div>
+        <!-- <div>
+        <strong style="grid-row: 2/3">题类：</strong>
         <a  href="#" style="color: green;grid-row: 2/3">全部</a>
         <a  href="#" style="grid-row: 2/3">中考真题</a>
         <a  href="#" style="grid-row: 2/3">常考题</a>
         <a  href="#" style="grid-row: 2/3">模拟题</a>
-
-        <a  href="#" style="grid-row: 3/4">难度</a>
-        <a  href="#" style="color: green;grid-row: 3/4">全部</a>
-        <a  href="#" style="grid-row: 3/4">1星</a>
-        <a  href="#" style="grid-row: 3/4">2星</a>
-        <a  href="#" style="grid-row: 3/4">3星</a>
-        <a  href="#" style="grid-row: 3/4">4星</a>
-
+        </div> -->
+        <div>
+          <strong>难度：</strong>
+          <a  href="#" style="color: green;" value="all">全部</a>
+          <a  href="#" value='1'>1星</a>
+          <a  href="#" value='2'>2星</a>
+          <a  href="#" value='3'>3星</a>
+          <a  href="#" value='4'>4星</a>
+        </div>
       </div>
         
       <!-- 显示题目，每个题目都可以拖动 -->
-      <div id = "questions" >请从上面栏目中根据类型获取题目选项</div>
+      <div id = "questionPlace" >请从上面栏目中根据类型获取题目选项</div>
     </div>
             
     </main>

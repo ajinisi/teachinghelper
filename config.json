@@ -1,0 +1,5 @@
+{
+    "IPAddr":"http://localhost",
+    "PORT":"8080",
+    "SOCKAddr":"http://localhost:8080"
+}

@@ -3,17 +3,21 @@ package main
 import (
 	"crypto/md5"
 	"database/sql"
+	"flag"
 	"fmt"
 	"html/template"
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"time"
 	// 驱动的引用与连接
 	_ "teachinghelper/memory"
 	"teachinghelper/session"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 // 在main包中创建一个全局的session管理器
@@ -28,51 +32,132 @@ func init() {
 	fmt.Println("fd")
 }
 
+// func main() {
+// 	//mux := http.NewServeMux()
+// 	http.HandleFunc("/login", login)
+// 	http.HandleFunc("/register", register)
+// 	//mux.HandleFunc("/insert", insert)
+// 	http.HandleFunc("/query", query)
+// 	http.HandleFunc("/queryresults", queryresults)
+// 	http.HandleFunc("/queryanswer", queryanswer)
+// 	//mux.HandleFunc("/querygrade", querygrade)
+// 	//mux.HandleFunc("/commitanwer", commitanwer)
+// 	http.HandleFunc("/queryquesbank", queryquesbank)
+// 	http.HandleFunc("/querypaper", querypaper)
+// 	http.HandleFunc("/querypapers", querypapers)
+// 	http.HandleFunc("/querytasks", querytasks)
+// 	http.HandleFunc("/querytask", querytask)
+// 	http.HandleFunc("/queryclass", queryclass)
+// 	http.HandleFunc("/querytodo", querytodo)
+// 	http.HandleFunc("/insertpaper", insertpaper)
+// 	http.HandleFunc("/inserttask", inserttask)
+// 	http.HandleFunc("/upload", upload)
+// 	http.HandleFunc("/insertque", insertQues)
+// 	// http.HandleFunc("/insertresult", insertResult)
+// 	http.HandleFunc("/queryResult", queryResult)
+
+// 	http.HandleFunc("/insertAll", insertAll)
+
+// 	http.HandleFunc("/queryPaperByTaskNo", queryPaperByTaskNo)
+// 	http.HandleFunc("/queryResultByUsername", queryResultByUsername)
+
+// 	//mux.HandleFunc("/index", index)
+
+// 	// 重定向第一种写法
+// 	http.Handle("/123", http.RedirectHandler("view/login.html", http.StatusFound))
+// 	// 重定向第二种写法
+// 	//http.HandleFunc("/123", Redir)
+
+// 	// 文件服务器
+// 	http.Handle("/", http.FileServer(http.Dir("C:/Users/ajini/Desktop/goproject/src/teachinghelper")))
+
+// 	// 未找到
+// 	http.Handle("/234", http.NotFoundHandler())
+
+// 	if err := http.ListenAndServe(":8080", nil); err != nil {
+// 		log.Fatal("ListenAndServe: ", err)
+// 	}
+// }
+
+// 初始化我们的 web 服务 web server
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	mux := makeMuxRouter()
+	// 端口号是通过前面提到的 .env 来获得
+	httpPort := os.Getenv("PORT")
+	log.Println("HTTP Server Listening on port :", httpPort)
+	s := &http.Server{
+		Addr:           ":" + httpPort,
+		Handler:        mux,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+
+	if err := s.ListenAndServe(); err != nil {
+		fmt.Println(err)
+	}
+
+}
+
+// create handlers
+func makeMuxRouter() http.Handler {
+	r := mux.NewRouter()
+
 	//mux := http.NewServeMux()
-	http.HandleFunc("/login", login)
-	http.HandleFunc("/register", register)
+	r.HandleFunc("/login", login)
+	r.HandleFunc("/register", register)
 	//mux.HandleFunc("/insert", insert)
-	http.HandleFunc("/query", query)
-	http.HandleFunc("/queryresults", queryresults)
-	http.HandleFunc("/queryanswer", queryanswer)
+	r.HandleFunc("/query", query)
+	r.HandleFunc("/queryresults", queryresults)
+	r.HandleFunc("/queryanswer", queryanswer)
 	//mux.HandleFunc("/querygrade", querygrade)
 	//mux.HandleFunc("/commitanwer", commitanwer)
-	http.HandleFunc("/queryquesbank", queryquesbank)
-	http.HandleFunc("/querypaper", querypaper)
-	http.HandleFunc("/querypapers", querypapers)
-	http.HandleFunc("/querytasks", querytasks)
-	http.HandleFunc("/querytask", querytask)
-	http.HandleFunc("/queryclass", queryclass)
-	http.HandleFunc("/querytodo", querytodo)
-	http.HandleFunc("/insertpaper", insertpaper)
-	http.HandleFunc("/inserttask", inserttask)
-	http.HandleFunc("/upload", upload)
-	http.HandleFunc("/insertque", insertQues)
-	// http.HandleFunc("/insertresult", insertResult)
-	http.HandleFunc("/queryResult", queryResult)
+	r.HandleFunc("/queryquesbank", queryquesbank)
+	r.HandleFunc("/querypaper", querypaper)
+	r.HandleFunc("/querypapers", querypapers)
+	r.HandleFunc("/querytasks", querytasks)
+	r.HandleFunc("/querytask", querytask)
+	r.HandleFunc("/queryclass", queryclass)
+	r.HandleFunc("/querytodo", querytodo)
+	r.HandleFunc("/insertpaper", insertpaper)
+	r.HandleFunc("/inserttask", inserttask)
+	r.HandleFunc("/upload", upload)
+	r.HandleFunc("/insertque", insertQues)
+	// muxRouter.HandleFunc("/insertresult", insertResult)
+	r.HandleFunc("/queryResult", queryResult)
 
-	http.HandleFunc("/insertAll", insertAll)
+	r.HandleFunc("/insertAll", insertAll)
 
-	http.HandleFunc("/queryPaperByTaskNo", queryPaperByTaskNo)
-	http.HandleFunc("/queryResultByUsername", queryResultByUsername)
+	r.HandleFunc("/queryPaperByTaskNo", queryPaperByTaskNo)
+	r.HandleFunc("/queryResultByUsername", queryResultByUsername)
+
+	r.HandleFunc("/papers", deletePaper).Methods("DELETE")
 
 	//mux.HandleFunc("/index", index)
 
 	// 重定向第一种写法
-	http.Handle("/123", http.RedirectHandler("view/login.html", http.StatusFound))
+	r.Handle("/123", http.RedirectHandler("template/user/login.html", http.StatusFound))
 	// 重定向第二种写法
-	//http.HandleFunc("/123", Redir)
+	//r.HandleFunc("/123", Redir)
 
 	// 文件服务器
-	http.Handle("/", http.FileServer(http.Dir("C:/Users/ajini/Desktop/goproject/src/teachinghelper")))
+	// http.Handle("/", http.FileServer(http.Dir("C:/Users/ajini/Desktop/goproject/src/teachinghelper")))
+
+	// 文件服务器
+	var dir string
+	flag.StringVar(&dir, "dir", ".", "the directory to serve files from. Defaults to the current dir")
+	flag.Parse()
+	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 
 	// 未找到
-	http.Handle("/234", http.NotFoundHandler())
+	r.Handle("/234", http.NotFoundHandler())
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
+	return r
 }
 
 // func Index(w http.ResponseWriter, r *http.Request) {
@@ -101,7 +186,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
 		// 显示登陆界面
-		t, _ := template.ParseFiles("view/login.html")
+		t, _ := template.ParseFiles("template/user/login.html")
 		// ??
 		w.Header().Set("Content-Type", "text/html")
 		t.Execute(w, sess.Get("username"))
@@ -146,7 +231,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 		} else {
 
 			sess.Set("username", username[0])
-			fmt.Println(sess)
 
 			w.WriteHeader(200)
 			t, err := template.ParseFiles("index.html")

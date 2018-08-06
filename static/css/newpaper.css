@@ -1,7 +1,7 @@
 
 .left{
 	grid-column:2/7;
-	grid-row: 2/25;
+	grid-row: 3/25;
 
 	display: grid;
 	grid-template-columns: repeat(12, 1fr);
@@ -12,7 +12,7 @@
 
 .right{
 	grid-column:8/12;
-    grid-row: 2/25;
+    grid-row: 3/25;
     
 	display: grid;
 	grid-template-columns: repeat(12, 1fr);
@@ -20,16 +20,9 @@
 
 }
 
-.cj{
-	grid-column:1/13;
-	grid-row: 2/5;
 
-	display: grid;
-    background-color: beige;
-    padding:10px;
-}
 
-#div_paper{
+#paperPlace{
 	
 	padding:1%;
 	border:1px solid #aaaaaa;
@@ -39,7 +32,7 @@
 	overflow: auto;
 }
 
-#questions{
+#questionPlace{
 	grid-column: 1/13;
 	grid-row:6/22;
 	padding:1%;
@@ -49,27 +42,39 @@
 }
 
 
+/* 筛选题目类型，难度 */
 
-.cj>a{
+.filter{
+	grid-column:1/13;
+	grid-row: 2/5;
+
+	display: grid;
+    background-color: beige;
+    padding:10px;
+}
+
+.filter a{
 	font-family:cursive;
-	font-size:15px;
+	font-size:20px;
 	outline: none;
 	text-decoration: none;
 	margin-right: 0.625%;
 	text-align: center;
 	line-height: 2;
 	color:black;
-	}
+}
 	
 		
-.cj> a:hover {     
+.filter a:hover {     
 background: orange;
 }
 
-.cj> a:active {
+	
+.filteractive {
 background: red;
 color: white;
 }
+
 
 
 

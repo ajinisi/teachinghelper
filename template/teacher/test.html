@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+<style type="text/css">
+nav {
+height: 50px;
+}
+nav span {
+margin: 0 5px;
+}
+.show {
+color: red;
+}
+</style>
+</head>
+<body>
+<nav></nav>
+<ul>
+<li>
+<strong>手机:</strong>
+<a href="javascript:;">锤子T1</a>
+<a href="javascript:;">锤子T2</a>
+<a href="javascript:;">坚果U1</a>
+<a href="javascript:;">锤子M1</a>
+<a href="javascript:;">坚果Pro</a>
+</li>
+<li>
+<strong>价格:</strong>
+<a href="javascript:;">3200</a>
+<a href="javascript:;">2600</a>
+<a href="javascript:;">899</a>
+<a href="javascript:;">2799</a>
+<a href="javascript:;">2299</a>
+</li>
+<li>
+<strong>屏幕:</strong>
+<a href="javascript:;">399</a>
+<a href="javascript:;">600</a>
+<a href="javascript:;">800</a>
+<a href="javascript:;">1200</a>
+</li>
+</ul>
+<script type="text/javascript">
+
+var condition = ["single","2"]
+
+(function(){
+    var nav = document.querySelector('nav');
+    var li = document.querySelectorAll('li');
+    var ids = [];
+    for(var i = 0; i <li.length; i++){
+        setClick(li[i],i);
+    }
+    function setClick(parent,index){
+        var option = parent.getElementsByTagName("a");
+        for(var i = 0; i < option.length; i++){
+            /*
+            建一个数组
+            */
+            option[i].onclick = function(){
+                for(var i = 0; i < option.length; i++){
+                    // 每点击一次，重置该行所有样式
+                    option[i].className = "";
+                }
+                this.className = "show";
+                
+                condition[index]=this.value;
+
+                // var span = ids[index];
+                // if(ids[index]){
+                //     span.children[0].innerHTML = this.innerHTML;
+                //     return;
+                // }
+                // span = document.createElement("span");
+                // var a = document.createElement("a");
+                // var strong = document.createElement("strong");
+                // a.innerHTML = "x";
+                // a.href="javascript:;";
+                // a.onclick = function(){
+                //     nav.removeChild(span);
+                //     ids[index]="";
+                //     /*
+                //     删除元素清空数组对象位
+                //     */
+                //     for(var i = 0; i < option.length; i++){
+                //         option[i].className = "";
+                //     }
+                // }
+                // strong.innerHTML = this.innerHTML;
+                // span.appendChild(strong);
+                // span.appendChild(a);
+                // ids[index] = span;
+                // /*
+                // 元素生成之后，先存入数组的对应位
+                // */
+                
+                // /*
+                // 按照数组的顺序重新添加一遍元素
+                // */
+                // for(var i = 0; i < ids.length; i++){
+                //     if(ids[i]){
+                //         nav.appendChild(ids[i]);
+                //     }
+                // }
+            };
+        }
+    }
+})(); 
+</script>
+</body>
+</html>

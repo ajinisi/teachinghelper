@@ -23,7 +23,7 @@ window.setTimeout(function(){
 /*******************************************************************/
 
 function querytasks(){           
-  var url = "http://localhost:8080/querytasks";          
+  var url = config.SOCKAddr+"/querytasks";          
     
   xmlHttpRequest = createXmlHttpRequest();      
          
@@ -78,7 +78,7 @@ function statechangedQuerytasks(){
     else if(req.status == 401 || req.status == 403)
     {
 
-      window.location = "http://localhost:8080/template/user/login.html";
+      window.location = config.SOCKAddr+"/template/user/login.html";
       alert("request url is forbidden or not authorized to visit.");
       
     }
@@ -110,7 +110,7 @@ function bindViewAll(){
 
 function querytask(n){      
         
-	var url = "http://localhost:8080/querytask";          
+	var url = config.SOCKAddr+"/querytask";          
 	   
 	xmlHttpRequest = createXmlHttpRequest();      
 	 
@@ -174,7 +174,7 @@ function statechangedQuerytask(){
       else if(req.status == 401 || req.status == 403)
       {
   
-        window.location = "http://localhost:8080/template/user/login.html";
+        window.location = config.SOCKAddr+"/template/user/login.html";
         alert("request url is forbidden or not authorized to visit.");
         
       }
@@ -195,7 +195,7 @@ function bindViewOne(){
   function viewResult(i){
     // 将字符串分割为字符串数组
     var inf = btns[i].value.split(',')                     
-    window.location = "http://localhost:8080/template/teacher/doneTeacher.html?username="+inf[0]+"&taskNo="+inf[1]
+    window.location = config.SOCKAddr+"/template/teacher/doneTeacher.html?username="+inf[0]+"&taskNo="+inf[1]
   }  
   
   for(var j=0;j<btns.length;j++){
@@ -218,7 +218,7 @@ function bindViewOne(){
 // 查询目前可用的试卷
 function querypapers(){      
         
-  var url = "http://localhost:8080/querypapers";       
+  var url = config.SOCKAddr+"/querypapers";       
 	   
 	xmlHttpRequest = createXmlHttpRequest();      
 	 
@@ -256,7 +256,7 @@ function statechanged4(){
     else if(req.status == 401 || req.status == 403)
     {
 
-      window.location = "http://localhost:8080/template/user/login.html";
+      window.location = config.SOCKAddr+"/template/user/login.html";
       alert("request url is forbidden or not authorized to visit.");
       
     }
@@ -273,7 +273,7 @@ function statechanged4(){
 // 查询我执教的班级
 function queryclasses(){      
         
-  var url = "http://localhost:8080/queryclass";       
+  var url = config.SOCKAddr+"/queryclass";       
 	   
 	xmlHttpRequest = createXmlHttpRequest();      
 	 
@@ -309,7 +309,7 @@ function statechanged5(){
     else if(req.status == 401 || req.status == 403)
     {
 
-      window.location = "http://localhost:8080/template/user/login.html";
+      window.location = config.SOCKAddr+"/template/user/login.html";
       alert("request url is forbidden or not authorized to visit.");
       
     }

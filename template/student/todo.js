@@ -12,7 +12,7 @@ window.setTimeout(function(){
 
 
 function querytodo(){                 
-  var url = "http://localhost:8080/querytodo";          
+  var url = config.SOCKAddr+"/querytodo";          
       
   xmlHttpRequest = createXmlHttpRequest();      
            
@@ -64,7 +64,7 @@ function statechangedQuerytodo(){
     else if(req.status == 401 || req.status == 403)
     {
 
-      window.location = "http://localhost:8080/template/user/login.html";
+      window.location = config.SOCKAddr+"/template/user/login.html";
       alert("request url is forbidden or not authorized to visit.");
       
     }
@@ -84,7 +84,7 @@ function binds(){
   function viewQues(i){
     // 将字符串分割为字符串数组                      
     var inf = btns[i].value.split(',')
-  	window.location = "http://localhost:8080/template/student/doing.html?paperNo="+inf[0]+"&taskNo="+inf[1]
+  	window.location = config.SOCKAddr+"/template/student/doing.html?paperNo="+inf[0]+"&taskNo="+inf[1]
 
 	}                    
 
@@ -92,7 +92,7 @@ function binds(){
   function viewResult(i){
     // 将字符串分割为字符串数组                      
     var inf = btns[i].value.split(',')
-  	window.location = "http://localhost:8080/template/student/done.html?paperNo="+inf[0]+"&taskNo="+inf[1]
+  	window.location = config.SOCKAddr+"/template/student/done.html?paperNo="+inf[0]+"&taskNo="+inf[1]
 
 	}   
 

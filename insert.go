@@ -289,9 +289,7 @@ func insertAll(w http.ResponseWriter, r *http.Request) {
 	username := sess.Get("username")
 
 	var returnValue ReturnValue
-
 	body, _ := ioutil.ReadAll(r.Body)
-	fmt.Println(string(body))
 	if err := json.Unmarshal(body, &returnValue); err != nil {
 		fmt.Println(err)
 	}
@@ -569,4 +567,26 @@ func inserttask(w http.ResponseWriter, r *http.Request) {
 		// 返回“插入成功”
 		w.WriteHeader(200)
 	}
+}
+
+func deletePaper(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+
+	body, _ := ioutil.ReadAll(r.Body)
+	var num = string(body)
+	fmt.Println(num)
+
+	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
+	if err != nil {
+		//fmt.Println(err)
+		fmt.Printf("连接数据库失败")
+	}
+
+	_, err = db.Exec("DELETE FROM login.paper_bank where id=?", num)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(401)
+	}
+
+	w.WriteHeader(200)
 }

@@ -82,7 +82,7 @@ button1.onclick = function(){
 // 查询具体的某一张试卷中全部题目
 function queryPaperByTaskNo(n){      
         
-	var url = "http://localhost:8080/queryPaperByTaskNo";          
+	var url = config.SOCKAddr+"/queryPaperByTaskNo";          
 	   
 	xmlHttpRequest = createXmlHttpRequest();      
 	    
@@ -123,7 +123,7 @@ function queryPaperByTaskNo(n){
 
 function queryResultByUsername(){
 	
-  var url = "http://localhost:8080/queryResultByUsername?taskNo="+theRequest.taskNo+"&username="+theRequest.username;          
+  var url = config.SOCKAddr+"/queryResultByUsername?taskNo="+theRequest.taskNo+"&username="+theRequest.username;          
  
 	xmlHttpRequest = createXmlHttpRequest();      
 	    

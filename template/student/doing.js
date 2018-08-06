@@ -1,9 +1,24 @@
 
 
-// 这是一个全局变量，代表第几题
+// 这是一个全局变量，代表第几题，默认显示第一题
 var quesSequence = 0
 // 这是一个标记变量，代表提交前后
 var mark =0
+
+// 首先获得试卷的内容
+var questions
+window.setTimeout(function(){
+	querypaper(theRequest.paperNo)
+},20)   
+
+// 然后使得当前页面的li元素可点击
+window.setTimeout(function(){
+	bindli(quesSequence)
+},70) 
+
+/***********************************************/
+/***********************************************/
+
 
 /********* 下一题 **********/
 button2.onclick = function(){
@@ -17,8 +32,8 @@ button2.onclick = function(){
     } else {
         alert("已是最后一题")
     }
-	saveAnswer(quesSequence)
-	bindli()
+	// saveAnswer(quesSequence)
+	bindli(quesSequence)
 }
 /********* 上一题 **********/
 button1.onclick = function(){
@@ -32,8 +47,8 @@ button1.onclick = function(){
     } else {
         alert("已是第一题")
 	}
-	saveAnswer(quesSequence)
-	bindli()
+	// saveAnswer(quesSequence)
+	bindli(quesSequence)
 }
 
 /********* 提交学生的答案 *********/
@@ -43,43 +58,45 @@ button3.onclick = function(){
 }
 
 
-
-
-
-
-
-
-
-
-var questions
-window.setTimeout(function(){
-	// 获得试卷的内容
-	querypaper(theRequest.paperNo)
-},20)   
-
+// 局部的样式调整
+var liBeforeClick = {"border-color":"","color":""}
+var liAfterClick = {"border-color":"#4CAF50","color":"#4CAF50"}
 
 // 点击li标签触发里面的单选按钮，增大命中区域
-window.setTimeout(function(){
+function bindli(quesSequence){
+	var i = quesSequence
 	$("li").click(function(){
+		
+		// 重置所有li元素的样式
+		$("li").css(liBeforeClick)
+		
+		// 获得input元素，并判断它的点击状态
 		var child=$(this).find("input")
 		if(child.prop("checked")==false){
 			child.prop("checked",true)
-			$(this).css({"border-color":"#4CAF50","color":"#4CAF50"})
-		}
-		else{
-			child.prop("checked",false)
-		}
-	})
-},70) 
-
-
-// 使得li可点击
-function bindli(){
-	$("li").click(function(){
-		var child=$(this).find("input")
-		if(child.prop("checked")==false){
-			child.prop("checked",true)
-			$(this).css({"border-color":"#4CAF50","color":"#4CAF50"})
+			// “染色”
+			$(this).css(liAfterClick)
+			
+			results[i] = new Array(1)
+			results[i][0]=child.val()
+			
+			// 判断学生的对错
+			if(results[i][0]==questions[i].answers[0]){
+				grades[i]=new Array(1)
+				grades[i][0]="1"
+			}else{
+				grades[i]=new Array(1)
+				grades[i][0]="0"
+			}
+			
+			// 获得学生的得分
+			scores[i] = grades[i][0]*questions[i].grade
+	
+			console.log(results)
+			console.log(grades)
+			console.log(scores)
+			values={"results":results,"grades":grades,"scores":scores}
+	
 		}
 		else{
 			child.prop("checked",false)
@@ -89,10 +106,7 @@ function bindli(){
 
 
 // 选项卡
-var div = document.createElement("div");
-document.body.appendChild(div);
-
-var butto = document.getElementById("buttons")
+var butto = document.getElementById("tab")
 
 
 // window.onload=function(){
@@ -109,14 +123,14 @@ window.setTimeout(function(){
 
 	// 默认显示第一道题
 	showquestion(quesSequence);
-	saveAnswer(quesSequence)
+	// saveAnswer(quesSequence)
 
 },50)
 
 
 window.setTimeout(function(){
 	bind()
-	saveAnswer()
+	// saveAnswer()
 },80)   
 
 function bind(){
@@ -137,12 +151,12 @@ function bind(){
 function showquestion(quesSequence){
     var i=quesSequence
     // 清空，重新显示
-    document.getElementById('questions').innerHTML=''
+    document.getElementById('questionPlace').innerHTML=''
 
 	// 可以拖动的东西 
 	//document.getElementById('questions').innerHTML+="<div id='div"+i+"' ondrop='drop(event)' ondragover='allowDrop(event)'>"+"<div draggable='true' ondragstart='drag(event)' id='question"+i+"' ></div>"+"</div>"
     
-    document.getElementById('questions').innerHTML+=
+    document.getElementById('questionPlace').innerHTML+=
 			`<div class='question'> 
 					<div id='question${i}'></div>
 			</div>`
@@ -162,13 +176,25 @@ function showquestion(quesSequence){
 		for  (var j=0;j<questions[i].options.length;j++){
 			op+="<li class='option'>"
 			var id1='o'+i+j
-			op+="<input name='identity"+i+"' type='radio' value="+j+" id="+id1+">"
+			
+			/* 清除input自带的圆圈 */
+			op+="<input name='identity"+i+"' type='hidden' value="+j+" id="+id1+">"
 			op+="<label for="+id1+">"+(questions[i].options)[j]+"</label>"
 			op+="</li>"
 		} 
 		op+="</ol>"
+
+
+		// $("li")[1].css(liAeforeClick)
+
 		document.getElementById('options'+i).innerHTML=op
 		
+		// 如果该学生已经做了该题，则显示他的答案
+		if(results[i]!=null){
+			var tem = document.getElementsByTagName("li")
+			tem[results[i][0]].style.cssText="border-color:#4CAF50;color:#4CAF50"
+		}
+
 
 	}
 
@@ -222,6 +248,9 @@ function showquestion(quesSequence){
 		</audio>`
 		document.getElementById('options'+i).innerHTML+=z1
 		}
+
+
+
 
 }
 
@@ -277,7 +306,7 @@ function saveAnswer(quesSequence){
 
 
 function insertResult(){
-	var url = "http://localhost:8080/insertAll?taskNo="+theRequest.taskNo;          
+	var url = config.SOCKAddr+"/insertAll?taskNo="+theRequest.taskNo;          
 	   
 	xmlHttpRequest = createXmlHttpRequest();      
 	    
@@ -323,12 +352,12 @@ function insertResult(){
  function showQuesAnswer(quesSequence){
 	var i = quesSequence   
     // 清空，重新显示
-    document.getElementById('questions').innerHTML=''
+    document.getElementById('questionPlace').innerHTML=''
 
 	// 可以拖动的东西 
 	//document.getElementById('questions').innerHTML+="<div id='div"+i+"' ondrop='drop(event)' ondragover='allowDrop(event)'>"+"<div draggable='true' ondragstart='drag(event)' id='question"+i+"' ></div>"+"</div>"
     
-    document.getElementById('questions').innerHTML+=
+    document.getElementById('questionPlace').innerHTML+=
 		`<div class='question'> 
 			<div id='question${i}'></div>
 		</div>`

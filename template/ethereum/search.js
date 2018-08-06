@@ -3,7 +3,7 @@ function build(){
 	//passWord = document.f1.password.value;        
 		  
 	//var url = "LoginServlet?username="+userName+"&password="+passWord+"";         
-	var url = "http://localhost:8081/build";          
+	var url = config.SOCKAddr+"/build";          
 	
 	// 1.创建XMLHttpRequest组建      
 	xmlHttpRequest = createXmlHttpRequest();      

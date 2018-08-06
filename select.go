@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -133,70 +134,71 @@ func queryquesbank(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
 
 	// 验证是否登陆
-	// sess := globalSessions.SessionStart(w, r)
-	// if sess.Get("username") == nil {
-	// 	w.WriteHeader(403)
-	// 	t, err := template.ParseFiles("view/login.html")
-	// 	if err != nil {
-	// 		log.Println(err)
-	// 	}
-	// 	// ??
-	// 	w.Header().Set("Content-Type", "text/html")
-	// 	t.Execute(w, nil)
+	sess := globalSessions.SessionStart(w, r)
+	if sess.Get("username") == nil {
+		w.WriteHeader(403)
+		t, err := template.ParseFiles("view/login.html")
+		if err != nil {
+			log.Println(err)
+		}
+		// ??
+		w.Header().Set("Content-Type", "text/html")
+		t.Execute(w, nil)
 
-	// 	http.Redirect(w, r, "view/login.html", http.StatusFound)
+		http.Redirect(w, r, "view/login.html", http.StatusFound)
 
-	// } else {
+	} else {
 
-	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
-	if err != nil {
-		//fmt.Println(err)
-		fmt.Printf("连接数据库失败")
-	}
+		db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
+		if err != nil {
+			//fmt.Println(err)
+			fmt.Printf("连接数据库失败")
+		}
 
-	defer db.Close()
+		defer db.Close()
 
-	rows, err := db.Query("SELECT ID,QUES FROM login.ques_bank")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer rows.Close()
-
-	var tem int
-	var temp string
-	var questions []interface{}
-	var question interface{}
-
-	for rows.Next() {
-		if err := rows.Scan(&tem, &temp); err != nil {
+		rows, err := db.Query("SELECT ID,QUES FROM login.ques_bank")
+		if err != nil {
 			log.Fatal(err)
 		}
+
+		defer rows.Close()
+
+		var tem int
+		var temp string
 		// 未知类型的推荐处理方法
+		var questions []interface{}
+		var question interface{}
 
-		temp = strings.Replace(temp, "}", ",", 1)
-		temp = temp + "\"id\":" + strconv.Itoa(tem) + "}"
-		fmt.Println(temp)
-		json.Unmarshal([]byte(temp), &question)
-		questions = append(questions, question)
+		for rows.Next() {
+			if err := rows.Scan(&tem, &temp); err != nil {
+				log.Fatal(err)
+			}
 
-		//貌似也可以
-		// if err := rows.Scan(&question); err != nil {
-		// 	log.Fatal(err)
-		// }
-		// questions = append(questions, question)
+			// 手动把ID字段放进QUES中
+			temp = strings.Replace(temp, "}", ",", 1)
+			temp = temp + "\"id\":" + strconv.Itoa(tem) + "}"
+			fmt.Println(temp)
+			json.Unmarshal([]byte(temp), &question)
+			questions = append(questions, question)
 
+			//貌似也可以
+			// if err := rows.Scan(&question); err != nil {
+			// 	log.Fatal(err)
+			// }
+			// questions = append(questions, question)
+
+		}
+
+		ret, jsonErr := json.Marshal(&questions) // json化结果集
+		if jsonErr != nil {
+			log.Println(jsonErr)
+		}
+		fmt.Fprint(w, string(ret)) // json转化为字符串发送
+
+		w.WriteHeader(200)
 	}
 
-	ret, json_err := json.Marshal(&questions) // json化结果集
-	if json_err != nil {
-		log.Println(json_err)
-	}
-	fmt.Fprint(w, string(ret)) // json转化为字符串发送
-	//log.Println(string(ret))
-	w.WriteHeader(200)
-	//}
-	//}
 }
 
 // 查询试卷内容
@@ -207,12 +209,11 @@ func querypaper(w http.ResponseWriter, r *http.Request) {
 	// // 在控制台上输出信息
 	// fmt.Println("Form: ", r.Form)
 	// fmt.Println("Path: ", r.URL.Path)
-	// //username := r.Form["username"][0]
-	// date := r.Form["date"][0]
 
 	body, _ := ioutil.ReadAll(r.Body)
 	var num = string(body)
 	fmt.Println(num)
+
 	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
 	if err != nil {
 		//fmt.Println(err)
@@ -229,22 +230,27 @@ func querypaper(w http.ResponseWriter, r *http.Request) {
 
 	// rows, err := db.Query("SELECT QUES FROM login.questionbank")
 	// rows, err := db.Query("SELECT QUES FROM login.questionbank where QUES->'$.type'='fill'")
-	rows, err := db.Query("SELECT QUES FROM login.ques_bank where ID in (" + temp1 + ")" + "order by field(ID," + temp1 + ")")
+	rows, err := db.Query("SELECT ID,QUES FROM login.ques_bank where ID in (" + temp1 + ")" + "order by field(ID," + temp1 + ")")
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	defer rows.Close()
 
+	var tem int
 	var temp string
+	// 未知类型的推荐处理方法
 	var questions []interface{}
 	var question interface{}
 
 	for rows.Next() {
-		if err := rows.Scan(&temp); err != nil {
+		if err := rows.Scan(&tem, &temp); err != nil {
 			log.Fatal(err)
 		}
-		// 未知类型的推荐处理方法
+
+		// 手动把ID字段放进QUES中
+		temp = strings.Replace(temp, "}", ",", 1)
+		temp = temp + "\"id\":" + strconv.Itoa(tem) + "}"
+		fmt.Println(temp)
 
 		json.Unmarshal([]byte(temp), &question)
 		questions = append(questions, question)
@@ -262,7 +268,6 @@ func querypaper(w http.ResponseWriter, r *http.Request) {
 		log.Println(json_err)
 	}
 	fmt.Fprint(w, string(ret)) // json转化为字符串发送
-	fmt.Println(string(ret))
 
 	// w.WriteHeader(200)
 }

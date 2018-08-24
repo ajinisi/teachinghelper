@@ -117,14 +117,9 @@ function bindli(){
 
 
 // 选项卡
-var div = document.createElement("div");
-document.body.appendChild(div);
-
-var butto = document.getElementById("buttons")
-
+var butto = document.getElementById("tab")
 
 // window.onload=function(){
-
 window.setTimeout(function(){
 
 	// 循环生成按钮

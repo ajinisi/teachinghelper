@@ -13,24 +13,31 @@
 
 <body>
         <header>
-                <img style="grid-column: 1/2;height: 40px;" src="../view/images/logo.png" ></img>
+                <img style="grid-column: 1/2;height: 40px;" src="../../static/images/logo.png" ></img>
 
-                <a href="querypapers.html">我的试卷</a>
                 <a href="querydatas.html">学生成绩管理</a>
-                <a href="dotest.html">已完成测试</a>
-                <a href="insertque.html">新建题目</a>
-                <a href="makepaper.html">新建试卷</a>
                 <a href="queryusers.html">学生信息管理</a>
                 <a href="about.html">帮助中心</a>  
                     
-                <img style="grid-column: 13;height: 40px;" src="images/11019.jpg"></img>
+                <img style="grid-column: 13;height: 40px;" src="../../static/images/11019.jpg"></img>
         </header>
 
 
         <main>
 
+            <div class="bar-split"> 新建题目 </div>
 
-        <form style="grid-column: 4/10;grid-row: 2/10;height: 500px;" action="http://localhost:8080/insertque" method="GET" id="form2">
+            <!-- 导航栏 -->
+            <nav class="navigation">
+                <a href="newque.html">新建题目</a>
+                <a href="newpaper.html">新建试卷</a>
+                <a href="mypapers.html">我的试卷</a>
+                <a href="mytask.html">我的任务</a>
+                <a href="doneTeacher.html">查看任务完成</a>
+            </nav>
+
+
+        <form style="grid-column: 4/10;grid-row: 4/18;height: 500px;" action="http://localhost:8080/insertque" method="GET" id="form2">
         
             
             <div>
@@ -107,7 +114,7 @@
         </form>
 
         <!-- enctype="multipart/form-data" action="http://localhost:8080/upload" method="post" -->
-        <form style="grid-column: 4/10;grid-row: 19/25; height: 100px;" enctype="multipart/form-data"  method="post" id="form1">
+        <form style="grid-column: 4/10;grid-row: 21/25; " enctype="multipart/form-data"  method="post" id="form1">
             
             <div>
                 <label for="sub">附件:</label>

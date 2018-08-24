@@ -109,9 +109,13 @@ func makeMuxRouter() http.Handler {
 	r := mux.NewRouter()
 
 	//mux := http.NewServeMux()
+
+	// 账户管理
 	r.HandleFunc("/login", login)
 	r.HandleFunc("/register", register)
+	r.HandleFunc("/user", register).Methods("POST")
 	//mux.HandleFunc("/insert", insert)
+
 	r.HandleFunc("/query", query)
 	r.HandleFunc("/queryresults", queryresults)
 	r.HandleFunc("/queryanswer", queryanswer)
@@ -245,6 +249,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 // 注册
 func register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") //允许跨域
+
 	r.ParseForm()
 	username, found1 := r.Form["username"]
 	password, found2 := r.Form["password"]
@@ -252,6 +257,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, "请勿非法访问")
 		return
 	}
+
 	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/login?charset=utf8")
 	if err != nil {
 		io.WriteString(w, "连接数据库失败")
@@ -274,7 +280,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		//io.WriteString(w, "注册失败") // 返回结果
 	} else {
 		w.WriteHeader(200)
-		fmt.Printf("1")
+
 		//arr := http.StatueText(200)
 		//io.WriteString(w, arr) // 返回结果
 		t, err := template.ParseFiles("template/user/login.html")

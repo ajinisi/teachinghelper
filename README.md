@@ -37,3 +37,18 @@ $ go run *.go
 License
 ----
 GPL
+
+
+演示视频
+----
+
+学生端
+<iframe height=498 width=510 
+src="images/student.mp4" 
+frameborder=0 allowfullscreen>
+</iframe>
+老师端
+<iframe height=498 width=510 
+src="images/teacher.mp4" 
+frameborder=0 allowfullscreen>
+</iframe>

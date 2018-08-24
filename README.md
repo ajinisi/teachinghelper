@@ -30,8 +30,8 @@ main.go | 主程序
 ```
 $ go run *.go
 ```
-* 在浏览器中打开localhost:8080进入首页
-* 与区块链的交互
+在浏览器中打开localhost:8080进入首页
+
 
 
 License
@@ -39,13 +39,3 @@ License
 GPL
 
 
-演示视频
-----
-
-学生端
-<iframe height=498 width=510 src="static/images/student.mp4" frameborder=0 allowfullscreen></iframe>
-老师端
-<iframe height=498 width=510 
-src="static/images/teacher.mp4" 
-frameborder=0 allowfullscreen>
-</iframe>
